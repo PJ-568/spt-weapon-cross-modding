@@ -1,0 +1,69 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test tests/WeaponCrossModding.Tests/WeaponCrossModding.Tests.csproj -c Release
+
+      - name: Validate build output
+        run: |
+          test -f bin/Release/WeaponCrossModding.dll || exit 1
+          echo "Built WeaponCrossModding.dll"
+
+      - name: Compute mod version
+        id: version
+        run: |
+          VER=$(grep -oP '(?<=<Version>)[^<]+' WeaponCrossModding.csproj)
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      - name: Package mod as SPT-ready zip
+        run: |
+          VER="${{ steps.version.outputs.version }}"
+          STAGE="staging"
+          # 4.1.x 把 mod 根目录从 SPT/ 改为 SPT_Runtime/，且新数据不向后兼容。
+          mkdir -p "$STAGE/SPT_Runtime/user/mods/WeaponCrossModding"
+          cp bin/Release/WeaponCrossModding.dll "$STAGE/SPT_Runtime/user/mods/WeaponCrossModding/"
+          cd "$STAGE"
+          ZIP_NAME="WeaponCrossModding-v${VER}.zip"
+          mkdir -p ../dist
+          zip -r "../dist/${ZIP_NAME}" SPT_Runtime
+          cd ..
+          echo "Packed dist/${ZIP_NAME}"
+          ls -lh dist/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WeaponCrossModding-v${{ steps.version.outputs.version }}
+          path: dist/*.zip
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
