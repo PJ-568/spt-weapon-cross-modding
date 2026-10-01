@@ -24,6 +24,7 @@
    - 在 UZI StormWerkz 顶盖导轨上安装 ELCAN SpecterDR 或 SIG Sauer BRAVO4；
    - 在 CR 200DS / CR 50DS 前准星槽安装 StormWerkz 顶盖导轨或 MP-18 瞄具基座；
    - 在 PPSh-41 上安装莫辛纳甘枪管或 M14ALCS (MOD-0) 枪托；
+   - 在 730mm 标准莫辛枪管的前准星槽安装 MDR BLK LBL ALX 脚架（16 或 20 型号）；
    - 尝试同时安装 PPSh-41 防尘盖与 HUXWRX HX-QD 消音器，确认二者互斥。
 4. 若修改了物品 id，重新运行单元测试确认夹具仍与代码一致。
 
@@ -63,6 +64,7 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_barrel`, `mod_s
    - mount the ELCAN SpecterDR or SIG Sauer BRAVO4 on the UZI StormWerkz top cover rail;
    - mount the StormWerkz top cover rail or MP-18 scope base on the CR 200DS / CR 50DS front sight slot;
    - mount a Mosin barrel or the M14ALCS (MOD-0) buttstock on the PPSh-41;
+   - mount an MDR BLK LBL ALX bipod (16 or 20 model) on the front sight slot of the 730 mm standard Mosin barrel;
    - try mounting the PPSh-41 dust cover and a HUXWRX HX-QD suppressor together and confirm they are mutually exclusive.
 4. If you changed any item id, re-run the unit tests to confirm the fixtures still match the code.
 

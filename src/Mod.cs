@@ -31,7 +31,8 @@ namespace Pj568.WeaponCrossModding;
 ///      Tyrant Designs MOD Chevron AR-15 镂空手枪式握把（黑 / 黄 / 红）与 AS VAL Rotor 43 手枪式握把附缓冲管转接器；
 ///  14. 让 CR 50DS 转轮手枪的前准星槽支持安装 StormWerkz 顶盖导轨与 MP-18 瞄具基座；
 ///  15. 让 CR 50DS 转轮手枪的战术设备槽支持安装 Zenit RK 系列前握把、KAC MWS 脚架转接器
-///      与 BT10 V8 Atlas 折叠脚架。
+///      与 BT10 V8 Atlas 折叠脚架；
+///  16. 让 730mm 标准莫辛枪管的前准星槽支持安装 MDR BLK LBL ALX 脚架（16 与 20 型号）；
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -77,6 +78,10 @@ public class WeaponCrossModdingPlugin(
     private const string MosinBarrel220ThreadedId = "5bfd4cd60db834001c38f095"; // 220mm 锯短螺纹
     private const string MosinBarrel514Id = "5bfd4cbe0db834001b73449f"; // 514mm 卡宾
     private const string MosinBarrel730Id = "5ae09bff5acfc4001562219d"; // 730mm 标准
+
+    // MDR BLK LBL ALX 脚架（16 / 20 型号，由 WTT-ContentBackport 注入；安装于 730mm 标准莫辛枪管的前准星槽）。
+    private const string AlxBipod16Id = "680f6d9a4d7624d36e06527b";
+    private const string AlxBipod20Id = "680f7e4aeee716732708e84e";
 
     // PPSh-41 枪托槽兼容的枪托 / 握把。
     private const string BenelliM3TelescopicStockId = "6259c3387d6aab70bc23a18d"; // Benelli M3 可伸缩枪托
@@ -158,6 +163,7 @@ public class WeaponCrossModdingPlugin(
     private const string Cr50DsLabel = "CR 50DS";
     private const string Ppsh41Label = "PPSh-41";
     private const string M14ButtstockLabel = "M14ALCS (MOD-0) stock";
+    private const string MosinBarrel730Label = "Mosin 730mm barrel";
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -181,6 +187,9 @@ public class WeaponCrossModdingPlugin(
 
             // PPSh-41 枪管槽：追加莫辛纳甘的全部尺寸枪管。
             AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, BarrelSlotName, MosinBarrel200Id, MosinBarrel220ThreadedId, MosinBarrel514Id, MosinBarrel730Id);
+
+            // 730mm 标准莫辛枪管的前准星槽：追加 MDR BLK LBL ALX 脚架（16 与 20 型号）。
+            AddItemIdsToSlot(items, MosinBarrel730Id, MosinBarrel730Label, SightSlotName, AlxBipod16Id, AlxBipod20Id);
 
             // PPSh-41 枪托槽：追加 Benelli M3 可伸缩枪托、PKM / PKP 枪托、Ultima MP-155 握把、
             // KS-23 金属枪托，以及 M14 SAGE International M14ALCS (MOD-0) 枪托。

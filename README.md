@@ -16,7 +16,7 @@
 | CR 50DS 前准星槽与战术设备槽 | PPSh-41 枪管与枪托槽 |
 | --- | --- |
 | ![Chiappa 犀牛 50DS 左轮手枪](assets/50DS.webp) | ![PPSh-41 冲锋枪](assets/PPSh.webp) |
-| 前准星槽装瞄具基座；战术设备槽装 RK 系列前握把。 | 枪管槽装莫辛纳甘枪管并挂三轨；枪托槽装 M14ALCS (MOD-0) 枪托。 |
+| 前准星槽装瞄具基座；战术设备槽装 RK 系列前握把。 | 枪管槽装莫辛纳甘枪管并挂三轨；枪托槽装 M14ALCS (MOD-0) 枪托；730mm 莫辛枪管的准星槽可装 MDR BLK LBL ALX 脚架（16 / 20）。 |
 
 ## 文档
 
@@ -54,7 +54,7 @@ All injections are idempotent: an id already present is never added twice.
 | CR 50DS front sight and tactical slots | PPSh-41 barrel and stock slots |
 | --- | --- |
 | ![Chiappa Rhino 50DS revolver](assets/50DS.webp) | ![PPSh-41 SMG](assets/PPSh.webp) |
-| The front sight slot takes a scope base; the tactical slot takes an RK-series foregrip. | The barrel slot takes a Mosin barrel with the tri-rail mounted on it; the stock slot takes the M14ALCS (MOD-0) buttstock. |
+| The front sight slot takes a scope base; the tactical slot takes an RK-series foregrip. | The barrel slot takes a Mosin barrel with the tri-rail mounted on it; the stock slot takes the M14ALCS (MOD-0) buttstock; the 730 mm Mosin barrel's front sight slot takes an MDR BLK LBL ALX bipod (16 / 20). |
 
 ## Documentation
 

@@ -63,6 +63,10 @@ public class WeaponCrossModdingPluginTests
     private const string FortisShiftForegripId = "59f8a37386f7747af3328f06";
     private const string M14AlcsButtstockId = "5addc7ac5acfc400194dbd90";
     private const string M14AlcsPistolGripId = "5addc7db5acfc4001669f279";
+    private const string MosinBarrel730Id = "5ae09bff5acfc4001562219d";
+    private const string MosinFrontSightId = "5ae099875acfc4001714e593";
+    private const string AlxBipod16Id = "680f6d9a4d7624d36e06527b";
+    private const string AlxBipod20Id = "680f7e4aeee716732708e84e";
 
     // 与 src/Mod.cs 对应：M14ALCS (MOD-0) 枪托握把位的新增握把。
     private static readonly string[] M14AlcsPistolGripCompatIds =
@@ -341,6 +345,21 @@ public class WeaponCrossModdingPluginTests
         {
             Assert.Contains(new MongoId(id), filter);
         }
+    }
+
+    [Fact]
+    public async Task AddsAlxBipodsToMosin730mmBarrelSightSlot()
+    {
+        var barrel = ItemWithSlot("barrel_mosin_izhmash_mosin_std_730mm", "mod_sight_front", MosinFrontSightId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(MosinBarrel730Id)] = barrel };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(barrel, "mod_sight_front");
+        Assert.Contains(new MongoId(MosinFrontSightId), filter);
+        Assert.Contains(new MongoId(AlxBipod16Id), filter);
+        Assert.Contains(new MongoId(AlxBipod20Id), filter);
+        Assert.Equal(3, filter.Count);
     }
 
     [Fact]

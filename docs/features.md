@@ -12,6 +12,7 @@
 
 - PPSh-41 冲锋枪的 `mod_barrel` 枪管槽：新增莫辛纳甘全部 4 种尺寸枪管（200mm 锯短、220mm 锯短螺纹、514mm 卡宾、730mm 标准）。
 - PPSh-41 冲锋枪的 `mod_stock` 枪托槽：新增 Benelli M3 可伸缩枪托、PKM 木制枪托、Zenit PT-2 "Klassika" PK 机枪枪托、PKP 聚合物枪托、Ultima MP-155 塑料手枪式握把、KS-23 金属枪托与 M14 SAGE International M14ALCS (MOD-0) 枪托。
+- 730mm 标准莫辛枪管的 `mod_sight_front` 前准星槽：新增 MDR BLK LBL ALX 脚架（16 与 20 型号，由 `WTT-ContentBackport` 注入；与莫辛准星共用同一槽位，二者互斥）。
 
 ## 握把与配件
 
@@ -41,6 +42,7 @@
 
 - `mod_barrel` slot of the PPSh-41: adds all four Mosin barrel lengths (200 mm sawn-off, 220 mm threaded sawn-off, 514 mm carbine, 730 mm standard).
 - `mod_stock` slot of the PPSh-41: adds the Benelli M3 telescopic stock, the PKM wooden stock, the Zenit PT-2 "Klassika" PK stock, the PKP polymer stock, the Ultima MP-155 plastic pistol grip, the KS-23 metal stock and the M14 SAGE International M14ALCS (MOD-0) buttstock.
+- `mod_sight_front` slot of the 730 mm standard Mosin barrel: adds the MDR BLK LBL ALX bipods (16 and 20 models, injected by `WTT-ContentBackport`; shared with the Mosin front sight, so the two are mutually exclusive).
 
 ## Grips and accessories
 
