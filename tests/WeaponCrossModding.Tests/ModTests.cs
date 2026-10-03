@@ -68,6 +68,26 @@ public class WeaponCrossModdingPluginTests
     private const string AlxBipod16Id = "680f6d9a4d7624d36e06527b";
     private const string AlxBipod20Id = "680f7e4aeee716732708e84e";
 
+    private const string Aa12457BarrelId = "670fced86a7e274b1a0964e8";
+    private const string Aa12MountExistingId = "6710cea62bb09af72f0e6bf8";
+    private const string M60BipodId = "66012d9a3dff5074ed002e33";
+    private const string Mp18RifleId = "61f7c9e189e6fb1a5e3ea78d";
+    private const string Mp18StockExistingAId = "61f803b8ced75b2e852e35f8";
+    private const string Mp18StockExistingBId = "61f7b234ea4ab34f2f59c3ec";
+    private const string MarlinMxlrId = "67c6de3ce39861860909e8e5";
+    private const string Ks23MetalStockId = "5e848dc4e4dbc5266a4ec63d";
+
+    // Marlin MXLR .308 ME 杠杆步枪 mod_stock 槽的真实初始 filter。
+    private static readonly string[] MarlinMxlrStockIds =
+    [
+        "67c541ba5b84f7f36c03e555",
+        "67c541ca26265106dd0697a0",
+        "67c541d45b84f7f36c03e557",
+        "67ff1f9f32abb9a4280b5178",
+        "67ff1fa88e8db1dcb80ccada",
+        "67ff2c16c593c7b94a095e56",
+    ];
+
     // 与 src/Mod.cs 对应：M14ALCS (MOD-0) 枪托握把位的新增握把。
     private static readonly string[] M14AlcsPistolGripCompatIds =
     [
@@ -373,6 +393,53 @@ public class WeaponCrossModdingPluginTests
         var filter = FilterOf(rail, "mod_scope");
         Assert.Single(filter);
         Assert.Contains(new MongoId(M14DcsbMountId), filter);
+    }
+
+    [Fact]
+    public async Task AddsM60BipodToAa12457BarrelMountSlot()
+    {
+        var barrel = ItemWithSlot("barrel_aa12_457mm", "mod_mount", Aa12MountExistingId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Aa12457BarrelId)] = barrel };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(barrel, "mod_mount");
+        Assert.Contains(new MongoId(Aa12MountExistingId), filter);
+        Assert.Contains(new MongoId(M60BipodId), filter);
+        Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsKs23StockToMp18StockSlot()
+    {
+        var rifle = ItemWithSlot("weapon_mp18_762x54r", "mod_stock", Mp18StockExistingAId, Mp18StockExistingBId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Mp18RifleId)] = rifle };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(rifle, "mod_stock");
+        Assert.Contains(new MongoId(Mp18StockExistingAId), filter);
+        Assert.Contains(new MongoId(Mp18StockExistingBId), filter);
+        Assert.Contains(new MongoId(Ks23MetalStockId), filter);
+        Assert.Equal(3, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsKs23StockToMarlinMxlrStockSlot()
+    {
+        var rifle = ItemWithSlot("weapon_marlin_mxlr_308", "mod_stock", MarlinMxlrStockIds);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(MarlinMxlrId)] = rifle };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(rifle, "mod_stock");
+        foreach (var id in MarlinMxlrStockIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+
+        Assert.Contains(new MongoId(Ks23MetalStockId), filter);
+        Assert.Equal(MarlinMxlrStockIds.Length + 1, filter.Count);
     }
 
     [Fact]

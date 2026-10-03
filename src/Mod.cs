@@ -33,6 +33,8 @@ namespace Pj568.WeaponCrossModding;
 ///  15. 让 CR 50DS 转轮手枪的战术设备槽支持安装 Zenit RK 系列前握把、KAC MWS 脚架转接器
 ///      与 BT10 V8 Atlas 折叠脚架；
 ///  16. 让 730mm 标准莫辛枪管的前准星槽支持安装 MDR BLK LBL ALX 脚架（16 与 20 型号）；
+///  17. 让 AA-12 457mm 枪管的导轨槽（mod_mount）支持安装 M60 脚架；
+///  18. 让 MP-18 与 Marlin MXLR 的枪托槽（mod_stock）支持安装 KS-23 金属枪托；
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -46,6 +48,7 @@ public class WeaponCrossModdingPlugin(
     private const string BarrelSlotName = "mod_barrel";
     private const string StockSlotName = "mod_stock";
     private const string TacticalSlotName = "mod_tactical";
+    private const string MountSlotName = "mod_mount";
 
     // UZI StormWerkz 瞄具基座（顶盖导轨）
     private const string StormwerkzTopCoverRailId = "6698c90829e062525d0ad8ad";
@@ -157,6 +160,18 @@ public class WeaponCrossModdingPlugin(
     // AS VAL Rotor 43 手枪式握把附缓冲管转接器（自带 AR 规格缓冲管与 mod_stock_000 槽）。
     private const string AsValRotor43GripId = "5a69a2ed8dc32e000d46d1f1";
 
+    // AA-12 457mm 枪管（mod_mount 导轨槽宿主）。
+    private const string Aa12Barrel457Id = "670fced86a7e274b1a0964e8";
+
+    // MP-18 7.62x54R 单发步枪。
+    private const string Mp18RifleId = "61f7c9e189e6fb1a5e3ea78d";
+
+    // Marlin MXLR .308 ME 杠杆步枪（由 WTT-ContentBackport 注入）。
+    private const string MarlinMxlrId = "67c6de3ce39861860909e8e5";
+
+    // M60 脚架。
+    private const string M60BipodId = "66012d9a3dff5074ed002e33";
+
     // 日志中用于标识槽位承载者的短名。
     private const string MountLabel = "mount";
     private const string Cr200DsLabel = "CR 200DS";
@@ -164,6 +179,9 @@ public class WeaponCrossModdingPlugin(
     private const string Ppsh41Label = "PPSh-41";
     private const string M14ButtstockLabel = "M14ALCS (MOD-0) stock";
     private const string MosinBarrel730Label = "Mosin 730mm barrel";
+    private const string Aa12Barrel457Label = "AA-12 457mm barrel";
+    private const string Mp18RifleLabel = "MP-18 rifle";
+    private const string MarlinMxlrLabel = "Marlin MXLR";
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -214,6 +232,13 @@ public class WeaponCrossModdingPlugin(
 
             // UZI StormWerkz 护木底轨的 mod_tactical 槽：追加 Zenit RK 系列前握把。
             AddItemIdsToSlot(items, StormwerkzLowerHandguardRailId, StormwerkzLowerHandguardLabel, TacticalSlotName, ZenitRkForegripIds);
+
+            // AA-12 457mm 枪管的 mod_mount 导轨槽：追加 M60 脚架。
+            AddItemIdsToSlot(items, Aa12Barrel457Id, Aa12Barrel457Label, MountSlotName, M60BipodId);
+
+            // MP-18 与 Marlin MXLR 的 mod_stock 枪托槽：追加 KS-23 金属枪托。
+            AddItemIdsToSlot(items, Mp18RifleId, Mp18RifleLabel, StockSlotName, Ks23MetalStockId);
+            AddItemIdsToSlot(items, MarlinMxlrId, MarlinMxlrLabel, StockSlotName, Ks23MetalStockId);
         }
         catch (Exception ex)
         {
