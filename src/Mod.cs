@@ -35,6 +35,16 @@ namespace Pj568.WeaponCrossModding;
 ///  16. 让 730mm 标准莫辛枪管的前准星槽支持安装 MDR BLK LBL ALX 脚架（16 与 20 型号）；
 ///  17. 让 AA-12 457mm 枪管的导轨槽（mod_mount）支持安装 M60 脚架；
 ///  18. 让 MP-18 与 Marlin MXLR 的枪托槽（mod_stock）支持安装 KS-23 金属枪托；
+///  19. 让 RPD 520mm 枪管的枪口槽（mod_muzzle）支持安装 AKM PBS-1 消音器；
+///  20. 让 PPSh-41 冲锋枪的枪管槽支持安装 M700 的全部 4 种枪管、ORSIS T-5000M 枪管
+///      与 SKS / OP-SKS 的 520mm 枪管；
+///  21. 让 PPSh-41 冲锋枪的枪托槽支持安装 Zveno PK 缓冲管转接器；
+///  22. 让 PPSh-41 冲锋枪的机匣槽支持安装 TAPCO Intrafuse 与 Fab Defence UAS SKS 枪身套件；
+///  23. 让两个 SKS 枪身套件与除 KS-23 金属枪托之外的全部 PPSh-41 枪托（含原装木制枪托与 Zveno 缓冲管转接器）互不兼容；
+///  24. 让两个 SKS 枪身套件与 PPSh-41 的 71 发弹鼓互不兼容；
+///  25. 让 KS-23 金属枪托与两个 SKS 枪身套件枪托槽可装的配件互不兼容；
+///  26. 让 SKS 与 OP-SKS 照门固定环的照门槽（mod_sight_rear）支持安装 TKPD 导轨防尘盖；
+///  27. 让 TKPD 导轨防尘盖与 SKS / OP-SKS 枪本体互不兼容。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -45,10 +55,13 @@ public class WeaponCrossModdingPlugin(
 {
     private const string ScopeSlotName = "mod_scope";
     private const string SightSlotName = "mod_sight_front";
+    private const string SightRearSlotName = "mod_sight_rear";
     private const string BarrelSlotName = "mod_barrel";
     private const string StockSlotName = "mod_stock";
     private const string TacticalSlotName = "mod_tactical";
     private const string MountSlotName = "mod_mount";
+    private const string MuzzleSlotName = "mod_muzzle";
+    private const string RecieverSlotName = "mod_reciever"; // 游戏数据拼写即 reciever
 
     // UZI StormWerkz 瞄具基座（顶盖导轨）
     private const string StormwerkzTopCoverRailId = "6698c90829e062525d0ad8ad";
@@ -172,16 +185,88 @@ public class WeaponCrossModdingPlugin(
     // M60 脚架。
     private const string M60BipodId = "66012d9a3dff5074ed002e33";
 
+    // RPD 520mm 枪管（mod_muzzle 枪口槽宿主）与 AKM PBS-1 消音器。
+    private const string RpdBarrel520Id = "6513eff1e06849f06c0957d4";
+    private const string AkmPbs1Id = "5a0d63621526d8dba31fe3bf";
+
+    // M700 枪管（4 种）与 ORSIS T-5000M 枪管（可安装于 PPSh-41 枪管槽）。
+    private const string M700Barrel660Id = "5bfebc250db834001a6694e1"; // 26 英寸
+    private const string M700Barrel508ThreadedId = "5bfebc320db8340019668d79"; // 20 英寸螺纹
+    private const string M700BarrelStainless660Id = "5d2702e88abbc31ed91efc44"; // 26 英寸不锈钢
+    private const string M700BarrelStainless508ThreadedId = "5d2703038abbc3105103d94c"; // 20 英寸不锈钢螺纹
+    private const string T5000Barrel660Id = "5df256570dee1b22f862e9c4"; // ORSIS T-5000M 660mm
+
+    // SKS 与 OP-SKS 的 520mm 枪管（可安装于 PPSh-41 枪管槽）。
+    private const string SksBarrel520Id = "634f02331f9f536910079b51"; // SKS（TOZ）
+    private const string OpsksBarrel520Id = "634eff66517ccc8a960fc735"; // OP-SKS（Molot）
+
+    // SKS 枪身套件（可安装于 PPSh-41 机匣槽）：TAPCO Intrafuse 与 Fab Defence UAS。
+    private const string TapcoIntrafuseSksId = "5afd7ded5acfc40017541f5e";
+    private const string FabDefenceUasSksId = "5d0236dad7ad1a0940739d29";
+
+    // 上述两个套件的枪托槽分别只接受的配件（用于与 KS-23 金属枪托建立互斥）。
+    private const string TapcoIntrafuseBufferTubeId = "5afd7e095acfc40017541f61";
+    private const string FabDefenceUasFoldingStockId = "653ed132896b99b40a0292e6";
+
+    // PPSh-41 原装木制枪托（用于与 SKS 枪身套件建立互斥）。
+    private const string Ppsh41StockWoodId = "5ea03e9400685063ec28bfa4";
+
+    // Zveno PK 缓冲管转接器（由 WTT-ContentBackport 注入；可安装于 PPSh-41 枪托槽）。
+    private const string ZvenoBufferTubeId = "6a182c39b913af92800d8b5d";
+
+    // PPSh-41 7.62x25 71 发弹鼓。
+    private const string Ppsh71DrumMagId = "5ea034f65aad6446a939737e";
+
+    // SKS / OP-SKS 照门固定环（mod_sight_rear 照门槽宿主）与 TKPD 导轨防尘盖（由 WTT 注入）。
+    private const string SksRearSightBlockId = "634f04d82e5def262d0b30c6";
+    private const string OpsksRearSightBlockId = "634f05a21f9f536910079b56";
+    private const string TkpdRailedDustCoverId = "68aee8f8130c00663d08aeb3";
+
+    // SKS 与 OP-SKS 枪本体（用于与 TKPD 导轨防尘盖建立互斥）。
+    private const string SksWeaponId = "574d967124597745970e7c94";
+    private const string OpsksWeaponId = "587e02ff24597743df3deaeb";
+
+    // PPSh-41 枪托槽可装的全部枪托（用于与 SKS 枪身套件建立双向互斥；不含 KS-23 金属枪托）。
+    private static readonly (string Id, string Label)[] Ppsh41StockConflicts =
+    [
+        (Ppsh41StockWoodId, "PPSh-41 wooden stock"),
+        (BenelliM3TelescopicStockId, "Benelli M3 telescopic stock"),
+        (PkmWoodenStockId, "PKM wooden stock"),
+        (PkZenitPt2StockId, "Zenit PT-2 stock"),
+        (PkpPolymerStockId, "PKP polymer stock"),
+        (UltimaMp155PistolGripId, "Ultima MP-155 pistol grip"),
+        (M14AlcsButtstockId, "M14ALCS (MOD-0) stock"),
+        (ZvenoBufferTubeId, "Zveno buffer tube adapter"),
+    ];
+
+    // PPSh-41 机匣槽可装的 SKS 枪身套件。
+    private static readonly (string Id, string Label)[] SksChassisKits =
+    [
+        (TapcoIntrafuseSksId, "TAPCO Intrafuse SKS"),
+        (FabDefenceUasSksId, "Fab Defence UAS SKS"),
+    ];
+
+    // 两个 SKS 枪身套件枪托槽可装的配件（用于与 KS-23 金属枪托建立双向互斥）。
+    private static readonly (string Id, string Label)[] SksChassisStockParts =
+    [
+        (TapcoIntrafuseBufferTubeId, "TAPCO Intrafuse buffer tube"),
+        (FabDefenceUasFoldingStockId, "Fab Defence UAS folding stock"),
+    ];
+
     // 日志中用于标识槽位承载者的短名。
     private const string MountLabel = "mount";
     private const string Cr200DsLabel = "CR 200DS";
     private const string Cr50DsLabel = "CR 50DS";
     private const string Ppsh41Label = "PPSh-41";
     private const string M14ButtstockLabel = "M14ALCS (MOD-0) stock";
+    private const string RpdBarrel520Label = "RPD 520mm barrel";
     private const string MosinBarrel730Label = "Mosin 730mm barrel";
     private const string Aa12Barrel457Label = "AA-12 457mm barrel";
     private const string Mp18RifleLabel = "MP-18 rifle";
     private const string MarlinMxlrLabel = "Marlin MXLR";
+    private const string SksRearSightBlockLabel = "SKS rear sight block";
+    private const string OpsksRearSightBlockLabel = "OP-SKS rear sight block";
+    private const string TkpdRailedDustCoverLabel = "TKPD railed dust cover";
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -203,18 +288,41 @@ public class WeaponCrossModdingPlugin(
             // CR 50DS 战术设备槽：追加 Zenit RK 系列前握把、KAC MWS 脚架转接器与 BT10 V8 Atlas 折叠脚架。
             AddItemIdsToSlot(items, Cr50DsId, Cr50DsLabel, TacticalSlotName, [.. ZenitRkForegripIds, KacMwsBipodAdapterId, Bt10AtlasBipodId]);
 
-            // PPSh-41 枪管槽：追加莫辛纳甘的全部尺寸枪管。
-            AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, BarrelSlotName, MosinBarrel200Id, MosinBarrel220ThreadedId, MosinBarrel514Id, MosinBarrel730Id);
+            // PPSh-41 枪管槽：追加莫辛纳甘的全部尺寸枪管、M700 的全部 4 种枪管、ORSIS T-5000M 枪管
+            // 与 SKS / OP-SKS 的 520mm 枪管。
+            AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, BarrelSlotName,
+                MosinBarrel200Id, MosinBarrel220ThreadedId, MosinBarrel514Id, MosinBarrel730Id,
+                M700Barrel660Id, M700Barrel508ThreadedId, M700BarrelStainless660Id, M700BarrelStainless508ThreadedId, T5000Barrel660Id,
+                SksBarrel520Id, OpsksBarrel520Id);
+
+            // PPSh-41 机匣槽（mod_reciever）：追加 TAPCO Intrafuse 与 Fab Defence UAS SKS 枪身套件。
+            AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, RecieverSlotName, TapcoIntrafuseSksId, FabDefenceUasSksId);
 
             // 730mm 标准莫辛枪管的前准星槽：追加 MDR BLK LBL ALX 脚架（16 与 20 型号）。
             AddItemIdsToSlot(items, MosinBarrel730Id, MosinBarrel730Label, SightSlotName, AlxBipod16Id, AlxBipod20Id);
 
             // PPSh-41 枪托槽：追加 Benelli M3 可伸缩枪托、PKM / PKP 枪托、Ultima MP-155 握把、
-            // KS-23 金属枪托，以及 M14 SAGE International M14ALCS (MOD-0) 枪托。
-            AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, StockSlotName, BenelliM3TelescopicStockId, PkmWoodenStockId, PkZenitPt2StockId, PkpPolymerStockId, UltimaMp155PistolGripId, Ks23MetalStockId, M14AlcsButtstockId);
+            // KS-23 金属枪托、M14 SAGE International M14ALCS (MOD-0) 枪托与 Zveno PK 缓冲管转接器。
+            AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, StockSlotName, BenelliM3TelescopicStockId, PkmWoodenStockId, PkZenitPt2StockId, PkpPolymerStockId, UltimaMp155PistolGripId, Ks23MetalStockId, M14AlcsButtstockId, ZvenoBufferTubeId);
+
+            // SKS / OP-SKS 照门固定环的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
+            AddItemIdsToSlot(items, SksRearSightBlockId, SksRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
+            AddItemIdsToSlot(items, OpsksRearSightBlockId, OpsksRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
 
             // PPSh-41 防尘盖与 HUXWRX HX-QD 消音器互不兼容。
             AddDustCoverSuppressorConflict(items);
+
+            // 两个 SKS 枪身套件（机匣槽）与除 KS-23 金属枪托之外的全部 PPSh-41 枪托互不兼容。
+            AddSksChassisConflicts(items);
+
+            // 两个 SKS 枪身套件与 PPSh-41 的 71 发弹鼓互不兼容。
+            AddSksChassisDrumConflict(items);
+
+            // KS-23 金属枪托与两个 SKS 枪身套件枪托槽可装的配件互不兼容。
+            AddKs23StockSksChassisStockPartConflicts(items);
+
+            // TKPD 导轨防尘盖与 SKS / OP-SKS 枪本体互不兼容。
+            AddDustCoverSksConflicts(items);
 
             // Aim Sports“三轨”的第一个战术配件槽：追加多种前握把、SV-98 隔热带与 Fortis Shift 前握把。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, AimSportsTriRailTacticalSlotName, [.. AimSportsTriRailForegripIds, Sv98HeatRibbonId, FortisShiftForegripId]);
@@ -235,6 +343,9 @@ public class WeaponCrossModdingPlugin(
 
             // AA-12 457mm 枪管的 mod_mount 导轨槽：追加 M60 脚架。
             AddItemIdsToSlot(items, Aa12Barrel457Id, Aa12Barrel457Label, MountSlotName, M60BipodId);
+
+            // RPD 520mm 枪管的 mod_muzzle 枪口槽：追加 AKM PBS-1 消音器。
+            AddItemIdsToSlot(items, RpdBarrel520Id, RpdBarrel520Label, MuzzleSlotName, AkmPbs1Id);
 
             // MP-18 与 Marlin MXLR 的 mod_stock 枪托槽：追加 KS-23 金属枪托。
             AddItemIdsToSlot(items, Mp18RifleId, Mp18RifleLabel, StockSlotName, Ks23MetalStockId);
@@ -299,6 +410,60 @@ public class WeaponCrossModdingPlugin(
         AddConflictingItems(items, Ppsh41DustCoverId, "PPSh-41 dust cover", HuxwrxHxQdId, HuxwrxHxQdTanId);
         AddConflictingItems(items, HuxwrxHxQdId, "HUXWRX HX-QD", Ppsh41DustCoverId);
         AddConflictingItems(items, HuxwrxHxQdTanId, "HUXWRX HX-QD (Tan)", Ppsh41DustCoverId);
+    }
+
+    /// <summary>
+    /// 让两个 SKS 枪身套件（装于 PPSh-41 机匣槽）与除 KS-23 金属枪托之外的
+    /// 全部 PPSh-41 枪托双向互不兼容（幂等）。
+    /// Zveno 由 WTT-ContentBackport 注入，若缺失则跳过该项。
+    /// </summary>
+    private void AddSksChassisConflicts(Dictionary<MongoId, TemplateItem> items)
+    {
+        foreach ((string chassisId, string chassisLabel) in SksChassisKits)
+        {
+            AddConflictingItems(items, chassisId, chassisLabel, [.. Ppsh41StockConflicts.Select(x => x.Id)]);
+            foreach ((string stockId, string stockLabel) in Ppsh41StockConflicts)
+            {
+                AddConflictingItems(items, stockId, stockLabel, chassisId);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 让两个 SKS 枪身套件（装于 PPSh-41 机匣槽）与 PPSh-41 的 71 发弹鼓双向互不兼容（幂等）。
+    /// 两者均为原版物品、必定存在，故双向建立冲突。
+    /// </summary>
+    private void AddSksChassisDrumConflict(Dictionary<MongoId, TemplateItem> items)
+    {
+        foreach ((string chassisId, string chassisLabel) in SksChassisKits)
+        {
+            AddConflictingItems(items, chassisId, chassisLabel, Ppsh71DrumMagId);
+            AddConflictingItems(items, Ppsh71DrumMagId, "PPSh-41 71-round drum", chassisId);
+        }
+    }
+
+    /// <summary>
+    /// 让 KS-23 金属枪托与两个 SKS 枪身套件枪托槽可装的配件双向互不兼容（幂等）。
+    /// 所有相关物品均为原版物品、必定存在，故双向建立冲突。
+    /// </summary>
+    private void AddKs23StockSksChassisStockPartConflicts(Dictionary<MongoId, TemplateItem> items)
+    {
+        foreach ((string partId, string partLabel) in SksChassisStockParts)
+        {
+            AddConflictingItems(items, Ks23MetalStockId, "KS-23 metal stock", partId);
+            AddConflictingItems(items, partId, partLabel, Ks23MetalStockId);
+        }
+    }
+
+    /// <summary>
+    /// 让 TKPD 导轨防尘盖与 SKS / OP-SKS 枪本体双向互不兼容（幂等）。
+    /// SKS / OP-SKS 为原版物品；TKPD 导轨防尘盖由 WTT-ContentBackport 注入，若缺失则跳过。
+    /// </summary>
+    private void AddDustCoverSksConflicts(Dictionary<MongoId, TemplateItem> items)
+    {
+        AddConflictingItems(items, TkpdRailedDustCoverId, TkpdRailedDustCoverLabel, SksWeaponId, OpsksWeaponId);
+        AddConflictingItems(items, SksWeaponId, "SKS", TkpdRailedDustCoverId);
+        AddConflictingItems(items, OpsksWeaponId, "OP-SKS", TkpdRailedDustCoverId);
     }
 
     /// <summary>

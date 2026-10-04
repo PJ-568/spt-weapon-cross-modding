@@ -16,7 +16,7 @@
 | CR 50DS 前准星槽与战术设备槽 | PPSh-41 枪管与枪托槽 |
 | --- | --- |
 | ![Chiappa 犀牛 50DS 左轮手枪](assets/50DS.webp) | ![PPSh-41 冲锋枪](assets/PPSh.webp) |
-| 前准星槽装瞄具基座；战术设备槽装 RK 系列前握把。 | 枪管槽装莫辛纳甘枪管并挂三轨；枪托槽装 M14ALCS (MOD-0) 枪托；730mm 莫辛枪管的准星槽可装 MDR BLK LBL ALX 脚架（16 / 20）；AA-12 457mm 枪管的导轨槽可装 M60 脚架，MP-18 与 Marlin MXLR 的枪托槽可装 KS-23 金属枪托。 |
+| 前准星槽装瞄具基座；战术设备槽装 RK 系列前握把。 | 枪管槽装莫辛纳甘、M700、ORSIS T-5000M 或 SKS / OP-SKS 枪管（并挂三轨）；枪托槽装 M14ALCS (MOD-0) 枪托与 Zveno 缓冲管转接器；上机匣槽装 TAPCO Intrafuse 或 Fab Defence UAS SKS 枪身套件；SKS / OP-SKS 照门固定环的照门槽可装 TKPD 导轨防尘盖；730mm 莫辛枪管的准星槽可装 MDR BLK LBL ALX 脚架（16 / 20），AA-12 457mm 枪管的导轨槽可装 M60 脚架，MP-18 与 Marlin MXLR 的枪托槽可装 KS-23 金属枪托；此外 RPD 520mm 枪管的枪口装置槽可装 AKM PBS-1 消音器。 |
 
 ## 文档
 
@@ -54,7 +54,7 @@ All injections are idempotent: an id already present is never added twice.
 | CR 50DS front sight and tactical slots | PPSh-41 barrel and stock slots |
 | --- | --- |
 | ![Chiappa Rhino 50DS revolver](assets/50DS.webp) | ![PPSh-41 SMG](assets/PPSh.webp) |
-| The front sight slot takes a scope base; the tactical slot takes an RK-series foregrip. | The barrel slot takes a Mosin barrel with the tri-rail mounted on it; the stock slot takes the M14ALCS (MOD-0) buttstock; the 730 mm Mosin barrel's front sight slot takes an MDR BLK LBL ALX bipod (16 / 20); the AA-12 457 mm barrel's rail slot takes an M60 bipod, and the MP-18 and Marlin MXLR stock slots take a KS-23 metal stock. |
+| The front sight slot takes a scope base; the tactical slot takes an RK-series foregrip. | The barrel slot takes a Mosin, M700, ORSIS T-5000M or SKS / OP-SKS barrel (with the tri-rail mounted on it); the stock slot takes the M14ALCS (MOD-0) buttstock and the Zveno buffer tube adapter; the upper receiver slot takes a TAPCO Intrafuse or Fab Defence UAS SKS chassis kit; the SKS / OP-SKS rear sight blocks' sight slot takes the TKPD railed dust cover; the 730 mm Mosin barrel's front sight slot takes an MDR BLK LBL ALX bipod (16 / 20), the AA-12 457 mm barrel's rail slot takes an M60 bipod, and the MP-18 and Marlin MXLR stock slots take a KS-23 metal stock; additionally, the RPD 520 mm barrel's muzzle device slot takes an AKM PBS-1 suppressor. |
 
 ## Documentation
 

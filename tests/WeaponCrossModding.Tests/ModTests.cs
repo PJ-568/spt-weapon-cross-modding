@@ -37,6 +37,43 @@ public class WeaponCrossModdingPluginTests
         "5ae09bff5acfc4001562219d",
     ];
 
+    // 与 src/Mod.cs 对应：可安装于 PPSh-41 枪管槽的 M700 枪管与 ORSIS T-5000M 枪管。
+    private static readonly string[] M700BarrelIds =
+    [
+        "5bfebc250db834001a6694e1", // 26 英寸
+        "5bfebc320db8340019668d79", // 20 英寸螺纹
+        "5d2702e88abbc31ed91efc44", // 26 英寸不锈钢
+        "5d2703038abbc3105103d94c", // 20 英寸不锈钢螺纹
+    ];
+
+    private const string T5000Barrel660Id = "5df256570dee1b22f862e9c4";
+
+    // RPD 520mm 枪管（mod_muzzle 槽宿主）、其初始枪口配件，以及 AKM PBS-1 消音器。
+    private const string RpdBarrel520Id = "6513eff1e06849f06c0957d4";
+    private const string Rpd520MuzzleExistingId = "6513f0f5e63f29908d0ffab8";
+    private const string AkmPbs1Id = "5a0d63621526d8dba31fe3bf";
+
+    // SKS / OP-SKS 枪管（PPSh-41 枪管槽）。
+    private const string SksBarrel520Id = "634f02331f9f536910079b51";
+    private const string OpsksBarrel520Id = "634eff66517ccc8a960fc735";
+
+    // SKS 枪身套件（PPSh-41 机匣槽）及其枪托槽配件。
+    private const string TapcoIntrafuseSksId = "5afd7ded5acfc40017541f5e";
+    private const string FabDefenceUasSksId = "5d0236dad7ad1a0940739d29";
+    private const string TapcoIntrafuseBufferTubeId = "5afd7e095acfc40017541f61";
+    private const string FabDefenceUasFoldingStockId = "653ed132896b99b40a0292e6";
+
+    // Zveno PK 缓冲管转接器（PPSh-41 枪托槽）与 PPSh-41 71 发弹鼓。
+    private const string ZvenoBufferTubeId = "6a182c39b913af92800d8b5d";
+    private const string Ppsh71DrumMagId = "5ea034f65aad6446a939737e";
+
+    // SKS / OP-SKS 照门固定环、TKPD 导轨防尘盖，以及 SKS / OP-SKS 枪本体。
+    private const string SksRearSightBlockId = "634f04d82e5def262d0b30c6";
+    private const string OpsksRearSightBlockId = "634f05a21f9f536910079b56";
+    private const string TkpdRailedDustCoverId = "68aee8f8130c00663d08aeb3";
+    private const string SksWeaponId = "574d967124597745970e7c94";
+    private const string OpsksWeaponId = "587e02ff24597743df3deaeb";
+
     private const string Ppsh41StockId = "5ea03e9400685063ec28bfa4";
 
     private static readonly string[] Ppsh41StockCompatIds =
@@ -48,6 +85,7 @@ public class WeaponCrossModdingPluginTests
         "606eef46232e5a31c233d500",
         "5e848dc4e4dbc5266a4ec63d",
         "5addc7ac5acfc400194dbd90", // M14ALCS (MOD-0) 枪托
+        "6a182c39b913af92800d8b5d", // Zveno PK 缓冲管转接器
     ];
 
     private const string Ppsh41DustCoverId = "5ea03e5009aa976f2e7a514b";
@@ -184,7 +222,16 @@ public class WeaponCrossModdingPluginTests
             Assert.Contains(new MongoId(id), filter);
         }
 
-        Assert.Equal(1 + MosinBarrelIds.Length, filter.Count);
+        foreach (var id in M700BarrelIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+
+        Assert.Contains(new MongoId(T5000Barrel660Id), filter);
+        Assert.Contains(new MongoId(SksBarrel520Id), filter);
+        Assert.Contains(new MongoId(OpsksBarrel520Id), filter);
+
+        Assert.Equal(1 + MosinBarrelIds.Length + M700BarrelIds.Length + 1 + 2, filter.Count);
     }
 
     [Fact]
@@ -197,7 +244,7 @@ public class WeaponCrossModdingPluginTests
         await plugin.OnLoadAsync(CancellationToken.None);
         await plugin.OnLoadAsync(CancellationToken.None);
 
-        Assert.Equal(1 + MosinBarrelIds.Length, FilterOf(ppsh, "mod_barrel").Count);
+        Assert.Equal(1 + MosinBarrelIds.Length + M700BarrelIds.Length + 1 + 2, FilterOf(ppsh, "mod_barrel").Count);
     }
 
     [Fact]
@@ -396,6 +443,26 @@ public class WeaponCrossModdingPluginTests
     }
 
     [Fact]
+    public async Task AddsTkpdDustCoverToSksRearSightBlockSightSlot()
+    {
+        var sksBlock = ItemWithSlot("mount_sks_toz_sks_rear_sight_block", "mod_sight_rear");
+        var opsksBlock = ItemWithSlot("mount_sks_molot_sks_rear_sight_block", "mod_sight_rear");
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(SksRearSightBlockId)] = sksBlock,
+            [new MongoId(OpsksRearSightBlockId)] = opsksBlock,
+        };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        foreach (var block in new[] { sksBlock, opsksBlock })
+        {
+            Assert.Contains(new MongoId(TkpdRailedDustCoverId), FilterOf(block, "mod_sight_rear"));
+            Assert.Single(FilterOf(block, "mod_sight_rear"));
+        }
+    }
+
+    [Fact]
     public async Task AddsM60BipodToAa12457BarrelMountSlot()
     {
         var barrel = ItemWithSlot("barrel_aa12_457mm", "mod_mount", Aa12MountExistingId);
@@ -440,6 +507,144 @@ public class WeaponCrossModdingPluginTests
 
         Assert.Contains(new MongoId(Ks23MetalStockId), filter);
         Assert.Equal(MarlinMxlrStockIds.Length + 1, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsAkmPbs1ToRpd520BarrelMuzzleSlot()
+    {
+        var barrel = ItemWithSlot("barrel_rpd_zid_rpd_520mm_762x39", "mod_muzzle", Rpd520MuzzleExistingId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(RpdBarrel520Id)] = barrel };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(barrel, "mod_muzzle");
+        Assert.Contains(new MongoId(Rpd520MuzzleExistingId), filter);
+        Assert.Contains(new MongoId(AkmPbs1Id), filter);
+        Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsPartsToPpsh41ReceiverSlot()
+    {
+        var ppsh = ItemWithSlot("weapon_zis_ppsh41_762x25", "mod_reciever", Ppsh41DustCoverId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Ppsh41Id)] = ppsh };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(ppsh, "mod_reciever");
+        Assert.Contains(new MongoId(Ppsh41DustCoverId), filter);
+        Assert.Contains(new MongoId(TapcoIntrafuseSksId), filter);
+        Assert.Contains(new MongoId(FabDefenceUasSksId), filter);
+        Assert.Equal(3, filter.Count);
+    }
+
+    [Fact]
+    public async Task MakesSksChassisKitsConflictWithPpsh71Drum()
+    {
+        var tapco = ItemWithConflicts("TAPCO Intrafuse SKS");
+        var fab = ItemWithConflicts("Fab Defence UAS SKS");
+        var drum = ItemWithConflicts("PPSh-41 71-round drum");
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(TapcoIntrafuseSksId)] = tapco,
+            [new MongoId(FabDefenceUasSksId)] = fab,
+            [new MongoId(Ppsh71DrumMagId)] = drum,
+        };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        foreach (var chassis in new[] { tapco, fab })
+        {
+            Assert.Contains(new MongoId(Ppsh71DrumMagId), chassis.Properties!.ConflictingItems!);
+        }
+
+        Assert.Contains(new MongoId(TapcoIntrafuseSksId), drum.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(FabDefenceUasSksId), drum.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task MakesTkpdDustCoverConflictWithSksAndOpsksWeapons()
+    {
+        var tkpdCover = ItemWithConflicts("TKPD railed dust cover");
+        var sks = ItemWithConflicts("SKS");
+        var opsks = ItemWithConflicts("OP-SKS");
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(TkpdRailedDustCoverId)] = tkpdCover,
+            [new MongoId(SksWeaponId)] = sks,
+            [new MongoId(OpsksWeaponId)] = opsks,
+        };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        Assert.Contains(new MongoId(SksWeaponId), tkpdCover.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(OpsksWeaponId), tkpdCover.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(TkpdRailedDustCoverId), sks.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(TkpdRailedDustCoverId), opsks.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task MakesSksChassisKitsConflictWithPpsh41Stocks()
+    {
+        string[] stockIds =
+        [
+            Ppsh41StockId,
+            "6259c3387d6aab70bc23a18d", // Benelli M3 可伸缩枪托
+            "646371a9f2404ab67905c8e6", // PKM 木制枪托
+            "6492d7847363b8a52206bc52", // Zenit PT-2
+            "6492e3a97df7d749100e29ee", // PKP 聚合物枪托
+            "606eef46232e5a31c233d500", // Ultima MP-155 握把
+            "5addc7ac5acfc400194dbd90", // M14ALCS (MOD-0) 枪托
+            "6a182c39b913af92800d8b5d", // Zveno PK 缓冲管转接器
+        ];
+        var tapco = ItemWithConflicts("TAPCO Intrafuse SKS");
+        var fab = ItemWithConflicts("Fab Defence UAS SKS");
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(TapcoIntrafuseSksId)] = tapco,
+            [new MongoId(FabDefenceUasSksId)] = fab,
+        };
+        foreach (string id in stockIds)
+        {
+            items[new MongoId(id)] = ItemWithConflicts("PPSh-41 stock");
+        }
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        foreach (var chassis in new[] { tapco, fab })
+        {
+            foreach (string id in stockIds)
+            {
+                Assert.Contains(new MongoId(id), chassis.Properties!.ConflictingItems!);
+            }
+        }
+
+        foreach (string id in stockIds)
+        {
+            Assert.Contains(new MongoId(TapcoIntrafuseSksId), items[new MongoId(id)].Properties!.ConflictingItems!);
+            Assert.Contains(new MongoId(FabDefenceUasSksId), items[new MongoId(id)].Properties!.ConflictingItems!);
+        }
+    }
+
+    [Fact]
+    public async Task MakesKs23StockConflictWithSksChassisStockParts()
+    {
+        var ks23 = ItemWithConflicts("KS-23 metal stock");
+        var tapcoTube = ItemWithConflicts("TAPCO Intrafuse buffer tube");
+        var fabStock = ItemWithConflicts("Fab Defence UAS folding stock");
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(Ks23MetalStockId)] = ks23,
+            [new MongoId(TapcoIntrafuseBufferTubeId)] = tapcoTube,
+            [new MongoId(FabDefenceUasFoldingStockId)] = fabStock,
+        };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        Assert.Contains(new MongoId(TapcoIntrafuseBufferTubeId), ks23.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(FabDefenceUasFoldingStockId), ks23.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(Ks23MetalStockId), tapcoTube.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(Ks23MetalStockId), fabStock.Properties!.ConflictingItems!);
     }
 
     [Fact]
