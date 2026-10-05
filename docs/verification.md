@@ -30,6 +30,7 @@
    - 在 RPD 520mm 枪管的枪口装置槽安装 AKM PBS-1 7.62x39 消音器；
    - 在 730mm 标准莫辛枪管或 SVT-40 标准枪口装置的前准星槽安装 MDR BLK LBL ALX 脚架（16 或 20 型号）；
    - 在 AA-12 457mm 枪管的导轨槽安装 M60 脚架；
+   - 在 Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）安装 MDR BLK LBL ALX 20 脚架；
    - 在 MP-18 或 Marlin MXLR 的枪托槽安装 KS-23 金属枪托；
    - 尝试同时安装 PPSh-41 防尘盖与 HUXWRX HX-QD 消音器，确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与任一非 KS-23 枪托（含 Zveno 缓冲管转接器），确认二者互斥；
@@ -85,6 +86,7 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - mount an AKM PBS-1 7.62x39 suppressor on the muzzle device slot of the RPD 520 mm barrel;
    - mount an MDR BLK LBL ALX bipod (16 or 20 model) on the front sight slot of the 730 mm standard Mosin barrel or the SVT-40 standard muzzle;
    - mount an M60 bipod on the rail slot of the AA-12 457 mm barrel;
+   - mount an MDR BLK LBL ALX 20 bipod on the lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit;
    - mount a KS-23 metal stock on the stock slot of the MP-18 or Marlin MXLR;
    - try mounting the PPSh-41 dust cover and a HUXWRX HX-QD suppressor together and confirm they are mutually exclusive;
    - try mounting an SKS chassis kit on the PPSh-41 together with any non-KS-23 stock (including the Zveno buffer tube adapter) and confirm they are mutually exclusive;

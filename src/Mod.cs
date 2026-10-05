@@ -56,7 +56,8 @@ namespace Pj568.WeaponCrossModding;
 ///  35. 让 SVDS 照门固定环的护木槽（mod_handguard）支持安装 SVDS 枪管，且 SVDS 枪管与自身互斥；
 ///  36. 让 SVDS 照门固定环与 PPSh-41 防尘盖双向互不兼容；
 ///  37. 让 SVDS 照门固定环与 TAPCO Intrafuse SKS 枪身套件双向互不兼容；
-///  38. 让 SVDS 照门固定环护木槽可装的 3 种原版 SVDS 护木与 PPSh-41 枪本体双向互不兼容。
+///  38. 让 SVDS 照门固定环护木槽可装的 3 种原版 SVDS 护木与 PPSh-41 枪本体双向互不兼容；
+///  39. 让 Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）支持安装 MDR BLK LBL ALX 20 脚架。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -138,6 +139,9 @@ public class WeaponCrossModdingPlugin(
     private const string AimSportsTriRailTacticalSlotName = "mod_tactical_000";
     private const string AimSportsTriRailSecondTacticalSlotName = "mod_tactical_001";
     private const string AimSportsTriRailLabel = "Aim Sports tri-rail";
+
+    // Fab Defence UAS SKS 枪身套件的下导轨（原本兼容脚架的第三个战术槽）。
+    private const string FabDefenceUasLowerRailSlotName = "mod_tactical_002";
 
     // UZI StormWerkz 护木底轨（mod_tactical 槽）。
     private const string StormwerkzLowerHandguardRailId = "66992f7d9950f5f4cd0602a8";
@@ -320,6 +324,7 @@ public class WeaponCrossModdingPlugin(
     private const string Svt40MuzzleStdLabel = "SVT-40 muzzle";
     private const string SvdsRearSightBlockLabel = "SVDS rear sight block";
     private const string SvdsBarrelLabel = "SVDS barrel";
+    private const string FabDefenceUasSksLabel = "Fab Defence UAS SKS";
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -405,6 +410,9 @@ public class WeaponCrossModdingPlugin(
 
             // Aim Sports“三轨”的瞄具槽：追加 M14 DCSB 瞄具基座。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, ScopeSlotName, M14DcsbMountId);
+
+            // Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）：追加 MDR BLK LBL ALX 20 脚架。
+            AddItemIdsToSlot(items, FabDefenceUasSksId, FabDefenceUasSksLabel, FabDefenceUasLowerRailSlotName, AlxBipod20Id);
 
             // M14ALCS (MOD-0) 枪托的握把位：追加 AR-15 Tactical Dynamics 镂空手枪式握把、
             // Tyrant Designs MOD Chevron 镂空手枪式握把（黑 / 黄 / 红）与 AS VAL Rotor 43 手枪式握把。

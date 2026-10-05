@@ -459,6 +459,21 @@ public class WeaponCrossModdingPluginTests
     }
 
     [Fact]
+    public async Task AddsAlxBipod20ToFabDefenceUasLowerRail()
+    {
+        var kit = ItemWithSlot("stock_sks_fab_defence_uas_sks", "mod_tactical_002", Bt10AtlasBipodId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(FabDefenceUasSksId)] = kit };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(kit, "mod_tactical_002");
+        Assert.Contains(new MongoId(Bt10AtlasBipodId), filter);
+        Assert.Contains(new MongoId(AlxBipod20Id), filter);
+        Assert.DoesNotContain(new MongoId(AlxBipod16Id), filter);
+        Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
     public async Task AddsMovedBarrelsAndSvdsBarrelToSvdsRearSightBlockHandguardSlot()
     {
         var block = ItemWithSlot("mount_svd_izhmash_svd_s_lower_band_std", "mod_handguard", SvdsHandguardStdId);
