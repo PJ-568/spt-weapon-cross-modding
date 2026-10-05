@@ -25,8 +25,8 @@
    - 在 CR 200DS / CR 50DS 前准星槽安装 StormWerkz 顶盖导轨或 MP-18 瞄具基座；
    - 在 PPSh-41 上安装莫辛 220mm / 514mm / 730mm、SKS / OP-SKS 520mm 或 SVT-40 625mm 枪管，安装 SVDS 照门固定环，安装 M14ALCS (MOD-0) 枪托，或安装 Zveno PK 缓冲管转接器；
    - 在 PPSh-41 的机匣槽安装 TAPCO Intrafuse SKS 枪身套件或 Fab Defence UAS SKS 枪身套件；
-   - 在 SVDS 照门固定环的护木槽安装莫辛 200mm、M700、ORSIS T-5000M 或 SVDS 枪管；
-   - 在 SKS / OP-SKS 照门固定环、SVT-40 625mm 枪管或 SVDS 照门固定环的照门槽安装 TKPD 导轨防尘盖；
+   - 在 SVDS 照门固定环的护木槽安装莫辛 200mm、M700、ORSIS T-5000M、SVDS 枪管或 SVT-40 625mm 枪管；
+   - 在 SKS / OP-SKS 照门固定环、SVT-40 625mm 枪管或 SVDS 照门固定环的照门槽安装 TKPD 导轨防尘盖；在 SVT-40 625mm 枪管的照门槽安装 5 种 SKS 导气管防尘盖（OP-SKS 标准、SKS 木制标准、TAPCO、Fab Defence UAS、ATI Monte Carlo）；
    - 在 RPD 520mm 枪管的枪口装置槽安装 AKM PBS-1 7.62x39 消音器；
    - 在 730mm 标准莫辛枪管或 SVT-40 标准枪口装置的前准星槽安装 MDR BLK LBL ALX 脚架（16 或 20 型号）；
    - 在 AA-12 457mm 枪管的导轨槽安装 M60 脚架；
@@ -39,6 +39,9 @@
    - 尝试同时安装 TKPD 导轨防尘盖与 SKS / OP-SKS / SVT-40 / AVT-40 / SVDS 枪本体，确认二者互斥；
    - 尝试在 SVDS 照门固定环护木槽安装莫辛 200mm / M700 / ORSIS T-5000M 枪管后，再将其与 SVDS 枪本体组合，确认互斥；
    - 尝试在 SVDS 上重复安装两根 SVDS 枪管，确认 SVDS 枪管与自身互斥；
+   - 尝试在 SVDS 上重复安装两个 TKPD 导轨防尘盖，确认 TKPD 与自身互斥；
+   - 尝试把 SVDS 照门固定环护木槽可装的 SVT-40 625mm 枪管与 SVDS 枪本体组合，确认二者互斥；
+   - 尝试重复安装两个 MDR BLK LBL ALX 20 脚架，确认其与自身互斥；
    - 尝试同时安装 SVDS 照门固定环与 PPSh-41 防尘盖，确认二者互斥；
    - 尝试同时安装 SVDS 照门固定环与 TAPCO Intrafuse SKS 枪身套件，确认二者互斥；
    - 尝试把 SVDS 照门固定环护木槽可装的原版 SVDS 护木装到 PPSh-41 上，确认二者互斥。
@@ -81,8 +84,8 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - mount the StormWerkz top cover rail or MP-18 scope base on the CR 200DS / CR 50DS front sight slot;
    - mount a 220 / 514 / 730 mm Mosin, SKS / OP-SKS 520 mm or SVT-40 625 mm barrel, mount the SVDS rear sight block, mount the M14ALCS (MOD-0) buttstock, or mount the Zveno PK buffer tube adapter, on the PPSh-41;
    - mount a TAPCO Intrafuse SKS chassis kit or a Fab Defence UAS SKS chassis kit in the PPSh-41 receiver slot;
-   - mount a Mosin 200 mm, M700, ORSIS T-5000M or SVDS barrel in the SVDS rear sight block's handguard slot;
-   - mount the TKPD railed dust cover on the sight slot of the SKS / OP-SKS rear sight blocks, the SVT-40 625 mm barrel or the SVDS rear sight block;
+   - mount a Mosin 200 mm, M700, ORSIS T-5000M, SVDS or SVT-40 625 mm barrel in the SVDS rear sight block's handguard slot;
+   - mount the TKPD railed dust cover on the sight slot of the SKS / OP-SKS rear sight blocks, the SVT-40 625 mm barrel or the SVDS rear sight block, and the 5 SKS gas-tube covers (OP-SKS standard, SKS wooden standard, TAPCO, Fab Defence UAS, ATI Monte Carlo) on the SVT-40 625 mm barrel's sight slot;
    - mount an AKM PBS-1 7.62x39 suppressor on the muzzle device slot of the RPD 520 mm barrel;
    - mount an MDR BLK LBL ALX bipod (16 or 20 model) on the front sight slot of the 730 mm standard Mosin barrel or the SVT-40 standard muzzle;
    - mount an M60 bipod on the rail slot of the AA-12 457 mm barrel;
@@ -95,6 +98,9 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - try mounting the TKPD railed dust cover together with the SKS / OP-SKS / SVT-40 / AVT-40 / SVDS weapons and confirm they are mutually exclusive;
    - try mounting a Mosin 200 mm / M700 / ORSIS T-5000M barrel in the SVDS rear sight block's handguard slot and then combining it with the SVDS weapon, and confirm they are mutually exclusive;
    - try mounting two SVDS barrels on the SVDS and confirm the SVDS barrel is exclusive with itself;
+   - try mounting two TKPD railed dust covers on the SVDS and confirm the TKPD railed dust cover is exclusive with itself;
+   - try combining the SVT-40 625 mm barrel accepted by the SVDS rear sight block's handguard slot with the SVDS weapon and confirm they are mutually exclusive;
+   - try mounting two MDR BLK LBL ALX 20 bipods and confirm the MDR BLK LBL ALX 20 bipod is exclusive with itself;
    - try mounting the SVDS rear sight block together with the PPSh-41 dust cover and confirm they are mutually exclusive;
    - try mounting the SVDS rear sight block together with the TAPCO Intrafuse SKS chassis kit and confirm they are mutually exclusive;
    - try mounting a vanilla SVDS handguard accepted by the SVDS rear sight block's handguard slot on the PPSh-41 and confirm they are mutually exclusive.

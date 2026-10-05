@@ -85,6 +85,20 @@ public class WeaponCrossModdingPluginTests
     private const string SvdsModernizedKitId = "5e56991336989c75ab4f03f6";
     private const string SvdsRearSightId = "5c471b7e2e2216152006e46c";
 
+    private const string SksGasCoverOpsksStdId = "634f03d40384a3ba4f06f874";
+    private const string SksGasCoverSksWoodId = "634f08a21f9f536910079b5a";
+    private const string SksGasCoverTapcoId = "653ecd065a1690d9d90491e6";
+    private const string SksGasCoverFabId = "653ece125a1690d9d90491e8";
+    private const string SksGasCoverAtiId = "653ecc425a1690d9d90491e4";
+    private static readonly string[] SksGasCoverIds =
+    [
+        SksGasCoverOpsksStdId,
+        SksGasCoverSksWoodId,
+        SksGasCoverTapcoId,
+        SksGasCoverFabId,
+        SksGasCoverAtiId,
+    ];
+
     private const string Ppsh41StockId = "5ea03e9400685063ec28bfa4";
 
     private static readonly string[] Ppsh41StockCompatIds =
@@ -490,7 +504,8 @@ public class WeaponCrossModdingPluginTests
         }
         Assert.Contains(new MongoId(T5000Barrel660Id), filter);
         Assert.Contains(new MongoId(SvdsBarrelId), filter);
-        Assert.Equal(1 + 1 + M700BarrelIds.Length + 1 + 1, filter.Count);
+        Assert.Contains(new MongoId(Svt40Barrel625Id), filter);
+        Assert.Equal(1 + 1 + M700BarrelIds.Length + 1 + 1 + 1, filter.Count);
     }
 
     [Fact]
@@ -774,7 +789,11 @@ public class WeaponCrossModdingPluginTests
         var filter = FilterOf(barrel, "mod_sight_rear");
         Assert.Contains(new MongoId(Svt40RearSightId), filter);
         Assert.Contains(new MongoId(TkpdRailedDustCoverId), filter);
-        Assert.Equal(2, filter.Count);
+        foreach (string id in SksGasCoverIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        Assert.Equal(2 + SksGasCoverIds.Length, filter.Count);
     }
 
     [Fact]
@@ -796,6 +815,45 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(Avt40WeaponId), tkpdCover.Properties!.ConflictingItems!);
         Assert.Contains(new MongoId(TkpdRailedDustCoverId), svt.Properties!.ConflictingItems!);
         Assert.Contains(new MongoId(TkpdRailedDustCoverId), avt.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task MakesTkpdDustCoverConflictWithItself()
+    {
+        var tkpdCover = ItemWithConflicts("TKPD railed dust cover");
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(TkpdRailedDustCoverId)] = tkpdCover };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        Assert.Contains(new MongoId(TkpdRailedDustCoverId), tkpdCover.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task MakesSvt40BarrelConflictWithSvdsWeapon()
+    {
+        var svtBarrel = ItemWithConflicts("SVT-40 625mm barrel");
+        var svds = ItemWithConflicts("SVDS");
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(Svt40Barrel625Id)] = svtBarrel,
+            [new MongoId(SvdsWeaponId)] = svds,
+        };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        Assert.Contains(new MongoId(SvdsWeaponId), svtBarrel.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(Svt40Barrel625Id), svds.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task MakesAlxBipod20ConflictWithItself()
+    {
+        var alxBipod20 = ItemWithConflicts("MDR BLK LBL ALX 20 bipod");
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(AlxBipod20Id)] = alxBipod20 };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        Assert.Contains(new MongoId(AlxBipod20Id), alxBipod20.Properties!.ConflictingItems!);
     }
 
     [Fact]

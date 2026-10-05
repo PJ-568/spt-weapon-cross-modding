@@ -57,7 +57,11 @@ namespace Pj568.WeaponCrossModding;
 ///  36. 让 SVDS 照门固定环与 PPSh-41 防尘盖双向互不兼容；
 ///  37. 让 SVDS 照门固定环与 TAPCO Intrafuse SKS 枪身套件双向互不兼容；
 ///  38. 让 SVDS 照门固定环护木槽可装的 3 种原版 SVDS 护木与 PPSh-41 枪本体双向互不兼容；
-///  39. 让 Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）支持安装 MDR BLK LBL ALX 20 脚架。
+///  39. 让 Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）支持安装 MDR BLK LBL ALX 20 脚架；
+///  40. 让 SVDS 照门固定环的护木槽支持安装 SVT-40 625mm 枪管，且该枪管与 SVDS 枪本体双向互不兼容；
+///  41. 让 TKPD 导轨防尘盖与自身互斥，防止重复安装；
+///  42. 让 SVT-40 625mm 枪管的照门槽支持安装 5 种 SKS 导气管防尘盖；
+///  43. 让 MDR BLK LBL ALX 20 脚架与自身互斥，防止重复安装。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -112,6 +116,7 @@ public class WeaponCrossModdingPlugin(
     // MDR BLK LBL ALX 脚架（16 / 20 型号，由 WTT-ContentBackport 注入；安装于 730mm 标准莫辛枪管的前准星槽）。
     private const string AlxBipod16Id = "680f6d9a4d7624d36e06527b";
     private const string AlxBipod20Id = "680f7e4aeee716732708e84e";
+    private const string AlxBipod20Label = "MDR BLK LBL ALX 20 bipod";
 
     // PPSh-41 枪托槽兼容的枪托 / 握把。
     private const string BenelliM3TelescopicStockId = "6259c3387d6aab70bc23a18d"; // Benelli M3 可伸缩枪托
@@ -279,6 +284,16 @@ public class WeaponCrossModdingPlugin(
         ("5c471c6c2e221602b66cd9ae", "SVDS standard handguard"),
     ];
 
+    // 原生 SKS 导气箍 mod_mount_000 槽可装的 5 种导气管防尘盖（用于与 MDR BLK LBL ALX 20 脚架建立双向互斥）。
+    private static readonly (string Id, string Label)[] SksGasTubeCovers =
+    [
+        ("634f03d40384a3ba4f06f874", "OP-SKS standard gas cover"),
+        ("634f08a21f9f536910079b5a", "SKS wooden standard gas cover"),
+        ("653ecd065a1690d9d90491e6", "TAPCO SKS gas cover"),
+        ("653ece125a1690d9d90491e8", "Fab Defence UAS SKS gas cover"),
+        ("653ecc425a1690d9d90491e4", "ATI Monte Carlo SKS gas cover"),
+    ];
+
     // PPSh-41 枪托槽可装的全部枪托（用于与 SKS 枪身套件建立双向互斥；不含 KS-23 金属枪托）。
     private static readonly (string Id, string Label)[] Ppsh41StockConflicts =
     [
@@ -370,13 +385,14 @@ public class WeaponCrossModdingPlugin(
             AddItemIdsToSlot(items, SksRearSightBlockId, SksRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
             AddItemIdsToSlot(items, OpsksRearSightBlockId, OpsksRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
 
-            // SVT-40 625mm 枪管的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
-            AddItemIdsToSlot(items, Svt40Barrel625Id, Svt40Barrel625Label, SightRearSlotName, TkpdRailedDustCoverId);
+            // SVT-40 625mm 枪管的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖与 5 种 SKS 导气管防尘盖。
+            AddItemIdsToSlot(items, Svt40Barrel625Id, Svt40Barrel625Label, SightRearSlotName,
+                [TkpdRailedDustCoverId, .. SksGasTubeCovers.Select(x => x.Id)]);
 
-            // SVDS 照门固定环的 mod_handguard 护木槽：追加莫辛 200mm、M700 全部 4 种、ORSIS T-5000M 与 SVDS 枪管。
+            // SVDS 照门固定环的 mod_handguard 护木槽：追加莫辛 200mm、M700 全部 4 种、ORSIS T-5000M、SVDS 枪管与 SVT-40 625mm 枪管。
             AddItemIdsToSlot(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, HandguardSlotName,
                 MosinBarrel200Id, M700Barrel660Id, M700Barrel508ThreadedId, M700BarrelStainless660Id, M700BarrelStainless508ThreadedId, T5000Barrel660Id,
-                SvdsBarrelId);
+                SvdsBarrelId, Svt40Barrel625Id);
 
             // SVDS 照门固定环的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
             AddItemIdsToSlot(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
@@ -396,11 +412,17 @@ public class WeaponCrossModdingPlugin(
             // TKPD 导轨防尘盖与 SKS / OP-SKS 枪本体互不兼容。
             AddDustCoverSksConflicts(items);
 
+            // TKPD 导轨防尘盖与自身互不兼容（防止重复安装）。
+            AddTkpdSelfConflict(items);
+
             // TKPD 导轨防尘盖与 SVT-40 / AVT-40 枪本体双向互不兼容。
             AddDustCoverSvtAvtConflicts(items);
 
             // SVDS 照门固定环引入的互斥（移植枪管、TKPD 与 SVDS 枪本体；SVDS 枪管防重；照门固定环与 PPSh-41 防尘盖）。
             AddSvdsConflicts(items);
+
+            // MDR BLK LBL ALX 20 脚架与自身互不兼容（防止重复安装）。
+            AddAlxBipod20SelfConflict(items);
 
             // Aim Sports“三轨”的第一个战术配件槽：追加多种前握把、SV-98 隔热带与 Fortis Shift 前握把。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, AimSportsTriRailTacticalSlotName, [.. AimSportsTriRailForegripIds, Sv98HeatRibbonId, FortisShiftForegripId]);
@@ -560,7 +582,7 @@ public class WeaponCrossModdingPlugin(
 
     /// <summary>
     /// SVDS 照门固定环引入的互斥（幂等）：
-    /// 移植到护木槽的枪管与 SVDS 枪本体双向互斥（避免经照门固定环装到原版 SVDS 上）；
+    /// 移植到护木槽的枪管（含 SVT-40 625mm 枪管）与 SVDS 枪本体双向互斥（避免经照门固定环装到原版 SVDS 上）；
     /// TKPD 导轨防尘盖与 SVDS 枪本体双向互斥；SVDS 枪管与自身互斥（防止装两个）；
     /// SVDS 照门固定环与 PPSh-41 防尘盖、TAPCO Intrafuse SKS 枪身套件双向互斥；
     /// SVDS 照门固定环护木槽的原版护木与 PPSh-41 枪本体双向互斥。
@@ -577,6 +599,10 @@ public class WeaponCrossModdingPlugin(
         AddConflictingItems(items, TkpdRailedDustCoverId, TkpdRailedDustCoverLabel, SvdsWeaponId);
         AddConflictingItems(items, SvdsWeaponId, "SVDS", TkpdRailedDustCoverId);
 
+        // SVDS 照门固定环护木槽新增的 SVT-40 625mm 枪管与 SVDS 枪本体双向互斥。
+        AddConflictingItems(items, Svt40Barrel625Id, Svt40Barrel625Label, SvdsWeaponId);
+        AddConflictingItems(items, SvdsWeaponId, "SVDS", Svt40Barrel625Id);
+
         AddConflictingItems(items, SvdsBarrelId, SvdsBarrelLabel, SvdsBarrelId);
 
         AddConflictingItems(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, Ppsh41DustCoverId);
@@ -590,6 +616,23 @@ public class WeaponCrossModdingPlugin(
         {
             AddConflictingItems(items, handguardId, handguardLabel, Ppsh41Id);
         }
+    }
+
+    /// <summary>
+    /// 让 TKPD 导轨防尘盖与自身互不兼容（幂等），防止重复安装。
+    /// </summary>
+    private void AddTkpdSelfConflict(Dictionary<MongoId, TemplateItem> items)
+    {
+        AddConflictingItems(items, TkpdRailedDustCoverId, TkpdRailedDustCoverLabel, TkpdRailedDustCoverId);
+    }
+
+    /// <summary>
+    /// 让 MDR BLK LBL ALX 20 脚架与自身互不兼容（幂等），防止重复安装。
+    /// ALX 20 由 WTT-ContentBackport 注入，若缺失则跳过。
+    /// </summary>
+    private void AddAlxBipod20SelfConflict(Dictionary<MongoId, TemplateItem> items)
+    {
+        AddConflictingItems(items, AlxBipod20Id, AlxBipod20Label, AlxBipod20Id);
     }
 
     /// <summary>
