@@ -74,6 +74,14 @@ public class WeaponCrossModdingPluginTests
     private const string SksWeaponId = "574d967124597745970e7c94";
     private const string OpsksWeaponId = "587e02ff24597743df3deaeb";
 
+    private const string Svt40Barrel625Id = "6410758c857473525b08bb77";
+    private const string Svt40WeaponId = "643ea5b23db6f9f57107d9fd";
+    private const string Avt40WeaponId = "6410733d5dd49d77bd07847e";
+    private const string Svt40RearSightId = "64119d90dcf48d656f0aa275";
+
+    private const string Svt40MuzzleStdId = "64119d1f2c6d6f921a0929f8";
+    private const string Svt40FrontSightId = "64119d672c6d6f921a0929fb";
+
     private const string Ppsh41StockId = "5ea03e9400685063ec28bfa4";
 
     private static readonly string[] Ppsh41StockCompatIds =
@@ -230,8 +238,9 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(T5000Barrel660Id), filter);
         Assert.Contains(new MongoId(SksBarrel520Id), filter);
         Assert.Contains(new MongoId(OpsksBarrel520Id), filter);
+        Assert.Contains(new MongoId(Svt40Barrel625Id), filter);
 
-        Assert.Equal(1 + MosinBarrelIds.Length + M700BarrelIds.Length + 1 + 2, filter.Count);
+        Assert.Equal(1 + MosinBarrelIds.Length + M700BarrelIds.Length + 1 + 2 + 1, filter.Count);
     }
 
     [Fact]
@@ -244,7 +253,7 @@ public class WeaponCrossModdingPluginTests
         await plugin.OnLoadAsync(CancellationToken.None);
         await plugin.OnLoadAsync(CancellationToken.None);
 
-        Assert.Equal(1 + MosinBarrelIds.Length + M700BarrelIds.Length + 1 + 2, FilterOf(ppsh, "mod_barrel").Count);
+        Assert.Equal(1 + MosinBarrelIds.Length + M700BarrelIds.Length + 1 + 2 + 1, FilterOf(ppsh, "mod_barrel").Count);
     }
 
     [Fact]
@@ -430,6 +439,21 @@ public class WeaponCrossModdingPluginTests
     }
 
     [Fact]
+    public async Task AddsAlxBipodsToSvt40MuzzleSightSlot()
+    {
+        var muzzle = ItemWithSlot("muzzle_svt40_toz_std_762x54r", "mod_sight_front", Svt40FrontSightId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Svt40MuzzleStdId)] = muzzle };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(muzzle, "mod_sight_front");
+        Assert.Contains(new MongoId(Svt40FrontSightId), filter);
+        Assert.Contains(new MongoId(AlxBipod16Id), filter);
+        Assert.Contains(new MongoId(AlxBipod20Id), filter);
+        Assert.Equal(3, filter.Count);
+    }
+
+    [Fact]
     public async Task AddsM14DcsbMountToTriRailScopeSlot()
     {
         var rail = ItemWithSlot("mount_mosin_aim_sports_tri_rail", "mod_scope");
@@ -581,6 +605,41 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(OpsksWeaponId), tkpdCover.Properties!.ConflictingItems!);
         Assert.Contains(new MongoId(TkpdRailedDustCoverId), sks.Properties!.ConflictingItems!);
         Assert.Contains(new MongoId(TkpdRailedDustCoverId), opsks.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task AddsTkpdDustCoverToSvt40BarrelSightSlot()
+    {
+        var barrel = ItemWithSlot("barrel_svt40_toz_625mm_762x54r", "mod_sight_rear", Svt40RearSightId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Svt40Barrel625Id)] = barrel };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(barrel, "mod_sight_rear");
+        Assert.Contains(new MongoId(Svt40RearSightId), filter);
+        Assert.Contains(new MongoId(TkpdRailedDustCoverId), filter);
+        Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
+    public async Task MakesTkpdDustCoverConflictWithSvtAndAvtWeapons()
+    {
+        var tkpdCover = ItemWithConflicts("TKPD railed dust cover");
+        var svt = ItemWithConflicts("SVT-40");
+        var avt = ItemWithConflicts("AVT-40");
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(TkpdRailedDustCoverId)] = tkpdCover,
+            [new MongoId(Svt40WeaponId)] = svt,
+            [new MongoId(Avt40WeaponId)] = avt,
+        };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        Assert.Contains(new MongoId(Svt40WeaponId), tkpdCover.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(Avt40WeaponId), tkpdCover.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(TkpdRailedDustCoverId), svt.Properties!.ConflictingItems!);
+        Assert.Contains(new MongoId(TkpdRailedDustCoverId), avt.Properties!.ConflictingItems!);
     }
 
     [Fact]

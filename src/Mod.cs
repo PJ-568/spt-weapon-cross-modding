@@ -44,7 +44,11 @@ namespace Pj568.WeaponCrossModding;
 ///  24. 让两个 SKS 枪身套件与 PPSh-41 的 71 发弹鼓互不兼容；
 ///  25. 让 KS-23 金属枪托与两个 SKS 枪身套件枪托槽可装的配件互不兼容；
 ///  26. 让 SKS 与 OP-SKS 照门固定环的照门槽（mod_sight_rear）支持安装 TKPD 导轨防尘盖；
-///  27. 让 TKPD 导轨防尘盖与 SKS / OP-SKS 枪本体互不兼容。
+///  27. 让 TKPD 导轨防尘盖与 SKS / OP-SKS 枪本体互不兼容；
+///  28. 让 PPSh-41 冲锋枪的枪管槽支持安装 SVT-40 / AVT-40 共用的 7.62x54R 625mm 枪管；
+///  29. 让 SVT-40 625mm 枪管的照门槽（mod_sight_rear）支持安装 TKPD 导轨防尘盖；
+///  30. 让 TKPD 导轨防尘盖与 SVT-40 / AVT-40 枪本体双向互不兼容；
+///  31. 让 SVT-40 标准枪口装置的准星槽（mod_sight_front）支持安装 MDR BLK LBL ALX 脚架（16 与 20 型号）。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -226,6 +230,16 @@ public class WeaponCrossModdingPlugin(
     private const string SksWeaponId = "574d967124597745970e7c94";
     private const string OpsksWeaponId = "587e02ff24597743df3deaeb";
 
+    // SVT-40 7.62x54R 625mm 枪管（可安装于 PPSh-41 枪管槽；其 mod_sight_rear 照门槽承载 TKPD 导轨防尘盖）。
+    private const string Svt40Barrel625Id = "6410758c857473525b08bb77";
+
+    // SVT-40 与 AVT-40 枪本体（用于与 TKPD 导轨防尘盖建立互斥）。
+    private const string Svt40WeaponId = "643ea5b23db6f9f57107d9fd";
+    private const string Avt40WeaponId = "6410733d5dd49d77bd07847e";
+
+    // SVT-40 标准枪口装置（其 mod_sight_front 准星槽承载 MDR BLK LBL ALX 脚架；SVT-40 与 AVT-40 共用）。
+    private const string Svt40MuzzleStdId = "64119d1f2c6d6f921a0929f8";
+
     // PPSh-41 枪托槽可装的全部枪托（用于与 SKS 枪身套件建立双向互斥；不含 KS-23 金属枪托）。
     private static readonly (string Id, string Label)[] Ppsh41StockConflicts =
     [
@@ -267,6 +281,8 @@ public class WeaponCrossModdingPlugin(
     private const string SksRearSightBlockLabel = "SKS rear sight block";
     private const string OpsksRearSightBlockLabel = "OP-SKS rear sight block";
     private const string TkpdRailedDustCoverLabel = "TKPD railed dust cover";
+    private const string Svt40Barrel625Label = "SVT-40 625mm barrel";
+    private const string Svt40MuzzleStdLabel = "SVT-40 muzzle";
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -288,18 +304,21 @@ public class WeaponCrossModdingPlugin(
             // CR 50DS 战术设备槽：追加 Zenit RK 系列前握把、KAC MWS 脚架转接器与 BT10 V8 Atlas 折叠脚架。
             AddItemIdsToSlot(items, Cr50DsId, Cr50DsLabel, TacticalSlotName, [.. ZenitRkForegripIds, KacMwsBipodAdapterId, Bt10AtlasBipodId]);
 
-            // PPSh-41 枪管槽：追加莫辛纳甘的全部尺寸枪管、M700 的全部 4 种枪管、ORSIS T-5000M 枪管
-            // 与 SKS / OP-SKS 的 520mm 枪管。
+            // PPSh-41 枪管槽：追加莫辛纳甘的全部尺寸枪管、M700 的全部 4 种枪管、ORSIS T-5000M 枪管、
+            // SKS / OP-SKS 的 520mm 枪管与 SVT-40 / AVT-40 共用的 7.62x54R 625mm 枪管。
             AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, BarrelSlotName,
                 MosinBarrel200Id, MosinBarrel220ThreadedId, MosinBarrel514Id, MosinBarrel730Id,
                 M700Barrel660Id, M700Barrel508ThreadedId, M700BarrelStainless660Id, M700BarrelStainless508ThreadedId, T5000Barrel660Id,
-                SksBarrel520Id, OpsksBarrel520Id);
+                SksBarrel520Id, OpsksBarrel520Id, Svt40Barrel625Id);
 
             // PPSh-41 机匣槽（mod_reciever）：追加 TAPCO Intrafuse 与 Fab Defence UAS SKS 枪身套件。
             AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, RecieverSlotName, TapcoIntrafuseSksId, FabDefenceUasSksId);
 
             // 730mm 标准莫辛枪管的前准星槽：追加 MDR BLK LBL ALX 脚架（16 与 20 型号）。
             AddItemIdsToSlot(items, MosinBarrel730Id, MosinBarrel730Label, SightSlotName, AlxBipod16Id, AlxBipod20Id);
+
+            // SVT-40 标准枪口装置的 mod_sight_front 前准星槽：追加 MDR BLK LBL ALX 脚架（16 与 20 型号）。
+            AddItemIdsToSlot(items, Svt40MuzzleStdId, Svt40MuzzleStdLabel, SightSlotName, AlxBipod16Id, AlxBipod20Id);
 
             // PPSh-41 枪托槽：追加 Benelli M3 可伸缩枪托、PKM / PKP 枪托、Ultima MP-155 握把、
             // KS-23 金属枪托、M14 SAGE International M14ALCS (MOD-0) 枪托与 Zveno PK 缓冲管转接器。
@@ -308,6 +327,9 @@ public class WeaponCrossModdingPlugin(
             // SKS / OP-SKS 照门固定环的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
             AddItemIdsToSlot(items, SksRearSightBlockId, SksRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
             AddItemIdsToSlot(items, OpsksRearSightBlockId, OpsksRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
+
+            // SVT-40 625mm 枪管的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
+            AddItemIdsToSlot(items, Svt40Barrel625Id, Svt40Barrel625Label, SightRearSlotName, TkpdRailedDustCoverId);
 
             // PPSh-41 防尘盖与 HUXWRX HX-QD 消音器互不兼容。
             AddDustCoverSuppressorConflict(items);
@@ -323,6 +345,9 @@ public class WeaponCrossModdingPlugin(
 
             // TKPD 导轨防尘盖与 SKS / OP-SKS 枪本体互不兼容。
             AddDustCoverSksConflicts(items);
+
+            // TKPD 导轨防尘盖与 SVT-40 / AVT-40 枪本体双向互不兼容。
+            AddDustCoverSvtAvtConflicts(items);
 
             // Aim Sports“三轨”的第一个战术配件槽：追加多种前握把、SV-98 隔热带与 Fortis Shift 前握把。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, AimSportsTriRailTacticalSlotName, [.. AimSportsTriRailForegripIds, Sv98HeatRibbonId, FortisShiftForegripId]);
@@ -464,6 +489,17 @@ public class WeaponCrossModdingPlugin(
         AddConflictingItems(items, TkpdRailedDustCoverId, TkpdRailedDustCoverLabel, SksWeaponId, OpsksWeaponId);
         AddConflictingItems(items, SksWeaponId, "SKS", TkpdRailedDustCoverId);
         AddConflictingItems(items, OpsksWeaponId, "OP-SKS", TkpdRailedDustCoverId);
+    }
+
+    /// <summary>
+    /// 让 TKPD 导轨防尘盖与 SVT-40 / AVT-40 枪本体双向互不兼容（幂等）。
+    /// SVT-40 / AVT-40 为原版物品；TKPD 导轨防尘盖由 WTT-ContentBackport 注入，若缺失则跳过。
+    /// </summary>
+    private void AddDustCoverSvtAvtConflicts(Dictionary<MongoId, TemplateItem> items)
+    {
+        AddConflictingItems(items, TkpdRailedDustCoverId, TkpdRailedDustCoverLabel, Svt40WeaponId, Avt40WeaponId);
+        AddConflictingItems(items, Svt40WeaponId, "SVT-40", TkpdRailedDustCoverId);
+        AddConflictingItems(items, Avt40WeaponId, "AVT-40", TkpdRailedDustCoverId);
     }
 
     /// <summary>
