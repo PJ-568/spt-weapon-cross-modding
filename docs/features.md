@@ -9,10 +9,12 @@
 - Aim Sports“三轨”莫辛步枪导轨的 `mod_scope` 槽：新增 M14 SAGE International DCSB 瞄具基座。
 - SKS / OP-SKS 照门固定环的 `mod_sight_rear` 照门槽：新增 TKPD 导轨防尘盖。
 - SVT-40 625mm 枪管的 `mod_sight_rear` 照门槽：新增 TKPD 导轨防尘盖。
+- SVDS 照门固定环的 `mod_sight_rear` 照门槽：新增 TKPD 导轨防尘盖。
 
 ## 枪管与枪托
 
-- PPSh-41 冲锋枪的 `mod_barrel` 枪管槽：新增莫辛纳甘全部 4 种尺寸枪管（200mm 锯短、220mm 锯短螺纹、514mm 卡宾、730mm 标准）、M700 全部 4 种枪管（26 英寸、20 英寸螺纹、26 英寸不锈钢、20 英寸不锈钢螺纹）、ORSIS T-5000M 660mm 枪管、SKS / OP-SKS 的 520mm 枪管与 SVT-40 / AVT-40 共用的 625mm 枪管。
+- PPSh-41 冲锋枪的 `mod_barrel` 枪管槽：新增莫辛纳甘 220mm 锯短螺纹 / 514mm 卡宾 / 730mm 标准枪管、SKS / OP-SKS 的 520mm 枪管、SVT-40 / AVT-40 共用的 625mm 枪管与 SVDS 照门固定环。（莫辛 200mm、M700 全部 4 种与 ORSIS T-5000M 枪管已移至 SVDS 照门固定环的护木槽。）
+- SVDS 照门固定环的 `mod_handguard` 护木槽：新增莫辛 200mm 锯短枪管、M700 全部 4 种枪管（26 英寸、20 英寸螺纹、26 英寸不锈钢、20 英寸不锈钢螺纹）、ORSIS T-5000M 660mm 枪管与 SVDS 枪管。
 - PPSh-41 冲锋枪的 `mod_stock` 枪托槽：新增 Benelli M3 可伸缩枪托、PKM 木制枪托、Zenit PT-2 "Klassika" PK 机枪枪托、PKP 聚合物枪托、Ultima MP-155 塑料手枪式握把、KS-23 金属枪托、M14 SAGE International M14ALCS (MOD-0) 枪托与 Zveno PK 缓冲管转接器（由 `WTT-ContentBackport` 注入）。
 - 730mm 标准莫辛枪管的 `mod_sight_front` 前准星槽：新增 MDR BLK LBL ALX 脚架（16 与 20 型号，由 `WTT-ContentBackport` 注入；与莫辛准星共用同一槽位，二者互斥）。
 - SVT-40 标准枪口装置的 `mod_sight_front` 前准星槽：新增 MDR BLK LBL ALX 脚架（16 与 20 型号，由 `WTT-ContentBackport` 注入；与原准星共用同一槽位，二者互斥）。
@@ -35,7 +37,12 @@
 - PPSh-41 机匣槽的两个 SKS 枪身套件（TAPCO Intrafuse、Fab Defence UAS）与除 KS-23 金属枪托之外的全部 PPSh-41 枪托（原装 PPSh 木制枪托、Benelli M3 可伸缩枪托、PKM 木制枪托、Zenit PT-2、PKP 聚合物枪托、Ultima MP-155 握把、M14ALCS (MOD-0) 枪托、Zveno PK 缓冲管转接器）互不兼容。
 - 两个 SKS 枪身套件与 PPSh-41 的 71 发弹鼓互不兼容。
 - KS-23 金属枪托与两个 SKS 枪身套件枪托槽可装的配件（TAPCO Intrafuse 缓冲管、Fab Defence UAS 折叠枪托）互不兼容。
-- TKPD 导轨防尘盖与 SKS、OP-SKS、SVT-40、AVT-40 枪本体互不兼容。
+- TKPD 导轨防尘盖与 SKS、OP-SKS、SVT-40、AVT-40、SVDS 枪本体互不兼容。
+- SVDS 照门固定环护木槽可装的莫辛 200mm、M700 全部 4 种与 ORSIS T-5000M 枪管与 SVDS 枪本体互不兼容。
+- SVDS 枪管与自身互不兼容（防止重复安装）。
+- SVDS 照门固定环与 PPSh-41 防尘盖互不兼容。
+- SVDS 照门固定环与 TAPCO Intrafuse SKS 枪身套件互不兼容。
+- SVDS 照门固定环护木槽可装的 3 种原版 SVDS 护木（CAA XRS DRG、Izhmash 现代化套件、SVDS 标准护木）与 PPSh-41 枪本体互不兼容。
 
 ===============================================================
 
@@ -50,10 +57,12 @@
 - `mod_scope` slot of the Aim Sports tri-rail Mosin mount: adds the M14 SAGE International DCSB scope mount.
 - `mod_sight_rear` sight slot of the SKS / OP-SKS rear sight blocks: adds the TKPD railed dust cover.
 - `mod_sight_rear` sight slot of the SVT-40 625 mm barrel: adds the TKPD railed dust cover.
+- `mod_sight_rear` sight slot of the SVDS rear sight block: adds the TKPD railed dust cover.
 
 ## Barrels and stocks
 
-- `mod_barrel` slot of the PPSh-41: adds all four Mosin barrel lengths (200 mm sawn-off, 220 mm threaded sawn-off, 514 mm carbine, 730 mm standard), all four M700 barrel lengths (26-inch, 20-inch threaded, 26-inch stainless, 20-inch stainless threaded), the ORSIS T-5000M 660 mm barrel, the SKS / OP-SKS 520 mm barrels and the 625 mm barrel shared by the SVT-40 / AVT-40.
+- `mod_barrel` slot of the PPSh-41: adds the 220 mm threaded sawn-off, 514 mm carbine and 730 mm standard Mosin barrels, the SKS / OP-SKS 520 mm barrels, the 625 mm barrel shared by the SVT-40 / AVT-40 and the SVDS rear sight block. (The Mosin 200 mm barrel, all four M700 barrels and the ORSIS T-5000M barrel have been moved to the SVDS rear sight block's handguard slot.)
+- `mod_handguard` slot of the SVDS rear sight block: adds the Mosin 200 mm sawn-off barrel, all four M700 barrels (26-inch, 20-inch threaded, 26-inch stainless, 20-inch stainless threaded), the ORSIS T-5000M 660 mm barrel and the SVDS barrel.
 - `mod_stock` slot of the PPSh-41: adds the Benelli M3 telescopic stock, the PKM wooden stock, the Zenit PT-2 "Klassika" PK stock, the PKP polymer stock, the Ultima MP-155 plastic pistol grip, the KS-23 metal stock, the M14 SAGE International M14ALCS (MOD-0) buttstock and the Zveno PK buffer tube adapter (injected by `WTT-ContentBackport`).
 - `mod_sight_front` slot of the 730 mm standard Mosin barrel: adds the MDR BLK LBL ALX bipods (16 and 20 models, injected by `WTT-ContentBackport`; shared with the Mosin front sight, so the two are mutually exclusive).
 - `mod_sight_front` slot of the SVT-40 standard muzzle: adds the MDR BLK LBL ALX bipods (16 and 20 models, injected by `WTT-ContentBackport`; shared with the stock front sight, so the two are mutually exclusive).
@@ -76,4 +85,9 @@
 - The two SKS chassis kits in the PPSh-41 receiver slot (TAPCO Intrafuse, Fab Defence UAS) are incompatible with every PPSh-41 stock except the KS-23 metal stock (PPSh wooden stock, Benelli M3 telescopic stock, PKM wooden stock, Zenit PT-2, PKP polymer stock, Ultima MP-155 pistol grip, M14ALCS (MOD-0) buttstock, Zveno PK buffer tube adapter).
 - The two SKS chassis kits are incompatible with the PPSh-41 71-round drum magazine.
 - The KS-23 metal stock is incompatible with the parts accepted by the two SKS chassis kits' stock slots (TAPCO Intrafuse buffer tube, Fab Defence UAS folding stock).
-- The TKPD railed dust cover is incompatible with the SKS, OP-SKS, SVT-40 and AVT-40 weapons themselves.
+- The TKPD railed dust cover is incompatible with the SKS, OP-SKS, SVT-40, AVT-40 and SVDS weapons themselves.
+- The Mosin 200 mm, all four M700 and the ORSIS T-5000M barrels accepted by the SVDS rear sight block's handguard slot are incompatible with the SVDS weapon itself.
+- The SVDS barrel is incompatible with itself (to prevent duplicate mounting).
+- The SVDS rear sight block is incompatible with the PPSh-41 dust cover.
+- The SVDS rear sight block is incompatible with the TAPCO Intrafuse SKS chassis kit.
+- The 3 vanilla SVDS handguards accepted by the SVDS rear sight block's handguard slot (CAA XRS DRG, Izhmash modernized kit, SVDS standard) are incompatible with the PPSh-41 weapon itself.

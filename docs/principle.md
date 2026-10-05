@@ -10,7 +10,7 @@ SPT 服务端把所有物品模板存放在 `TemplateTable.Items`（`Dictionary<
 
 每个 `TemplateItem` 的 `Properties.Slots` 是一个 `Slot` 列表。每个 `Slot` 有：
 
-- `Name`：槽位名，如 `mod_scope`、`mod_sight_front`、`mod_barrel`、`mod_stock`、`mod_tactical`、`mod_tactical_000`、`mod_tactical_001`、`mod_pistol_grip`、`mod_mount`、`mod_muzzle`、`mod_reciever`。
+- `Name`：槽位名，如 `mod_scope`、`mod_sight_front`、`mod_sight_rear`、`mod_barrel`、`mod_handguard`、`mod_stock`、`mod_tactical`、`mod_tactical_000`、`mod_tactical_001`、`mod_pistol_grip`、`mod_mount`、`mod_muzzle`、`mod_reciever`。
 - `Properties.Filters`：`SlotFilter` 列表。
 - `SlotFilter.Filter`：`HashSet<MongoId>`，即该槽位允许安装的物品 id 白名单。
 
@@ -73,7 +73,7 @@ The SPT server stores every item template in `TemplateTable.Items` (`Dictionary<
 
 Each `TemplateItem`'s `Properties.Slots` is a list of `Slot`. Every `Slot` has:
 
-- `Name`: the slot name, such as `mod_scope`, `mod_sight_front`, `mod_barrel`, `mod_stock`, `mod_tactical`, `mod_tactical_000`, `mod_tactical_001`, `mod_pistol_grip`, `mod_mount`, `mod_muzzle` and `mod_reciever`.
+- `Name`: the slot name, such as `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `mod_barrel`, `mod_handguard`, `mod_stock`, `mod_tactical`, `mod_tactical_000`, `mod_tactical_001`, `mod_pistol_grip`, `mod_mount`, `mod_muzzle` and `mod_reciever`.
 - `Properties.Filters`: a list of `SlotFilter`.
 - `SlotFilter.Filter`: a `HashSet<MongoId>`, the whitelist of item ids the slot accepts.
 

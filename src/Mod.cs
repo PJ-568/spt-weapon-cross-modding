@@ -48,7 +48,15 @@ namespace Pj568.WeaponCrossModding;
 ///  28. 让 PPSh-41 冲锋枪的枪管槽支持安装 SVT-40 / AVT-40 共用的 7.62x54R 625mm 枪管；
 ///  29. 让 SVT-40 625mm 枪管的照门槽（mod_sight_rear）支持安装 TKPD 导轨防尘盖；
 ///  30. 让 TKPD 导轨防尘盖与 SVT-40 / AVT-40 枪本体双向互不兼容；
-///  31. 让 SVT-40 标准枪口装置的准星槽（mod_sight_front）支持安装 MDR BLK LBL ALX 脚架（16 与 20 型号）。
+///  31. 让 SVT-40 标准枪口装置的准星槽（mod_sight_front）支持安装 MDR BLK LBL ALX 脚架（16 与 20 型号）；
+///  32. 让 PPSh-41 冲锋枪的枪管槽支持安装 SVDS 照门固定环；
+///  33. 将莫辛 200mm、M700 全部 4 种、ORSIS T-5000M 枪管自 PPSh-41 枪管槽移至 SVDS 照门固定环的护木槽（mod_handguard），
+///      并让这些枪管与 SVDS 枪本体双向互不兼容；
+///  34. 让 SVDS 照门固定环的照门槽（mod_sight_rear）支持安装 TKPD 导轨防尘盖，且该防尘盖与 SVDS 枪本体双向互不兼容；
+///  35. 让 SVDS 照门固定环的护木槽（mod_handguard）支持安装 SVDS 枪管，且 SVDS 枪管与自身互斥；
+///  36. 让 SVDS 照门固定环与 PPSh-41 防尘盖双向互不兼容；
+///  37. 让 SVDS 照门固定环与 TAPCO Intrafuse SKS 枪身套件双向互不兼容；
+///  38. 让 SVDS 照门固定环护木槽可装的 3 种原版 SVDS 护木与 PPSh-41 枪本体双向互不兼容。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -66,6 +74,7 @@ public class WeaponCrossModdingPlugin(
     private const string MountSlotName = "mod_mount";
     private const string MuzzleSlotName = "mod_muzzle";
     private const string RecieverSlotName = "mod_reciever"; // 游戏数据拼写即 reciever
+    private const string HandguardSlotName = "mod_handguard";
 
     // UZI StormWerkz 瞄具基座（顶盖导轨）
     private const string StormwerkzTopCoverRailId = "6698c90829e062525d0ad8ad";
@@ -240,6 +249,32 @@ public class WeaponCrossModdingPlugin(
     // SVT-40 标准枪口装置（其 mod_sight_front 准星槽承载 MDR BLK LBL ALX 脚架；SVT-40 与 AVT-40 共用）。
     private const string Svt40MuzzleStdId = "64119d1f2c6d6f921a0929f8";
 
+    // SVDS 照门固定环（mount_svd_izhmash_svd_s_lower_band_std，含 mod_handguard 护木槽与 mod_sight_rear 照门槽）。
+    private const string SvdsRearSightBlockId = "5c471c2d2e22164bef5d077f";
+
+    // SVDS 枪本体与 SVDS 枪管（枪管用于与自身建立互斥以防重复安装）。
+    private const string SvdsWeaponId = "5c46fbd72e2216398b5a8c9c";
+    private const string SvdsBarrelId = "5c471cb32e221602b177afaa";
+
+    // 自 PPSh-41 枪管槽移至 SVDS 照门固定环护木槽的枪管（用于与 SVDS 枪本体建立互斥）。
+    private static readonly (string Id, string Label)[] SvdsMovedBarrels =
+    [
+        (MosinBarrel200Id, "Mosin 200mm barrel"),
+        (M700Barrel660Id, "M700 26-inch barrel"),
+        (M700Barrel508ThreadedId, "M700 20-inch threaded barrel"),
+        (M700BarrelStainless660Id, "M700 26-inch stainless barrel"),
+        (M700BarrelStainless508ThreadedId, "M700 20-inch stainless threaded barrel"),
+        (T5000Barrel660Id, "ORSIS T-5000M 660mm barrel"),
+    ];
+
+    // SVDS 照门固定环 mod_handguard 护木槽可装的原版护木（用于与 PPSh-41 枪本体建立双向互斥）。
+    private static readonly (string Id, string Label)[] SvdsHandguards =
+    [
+        ("5e5699df2161e06ac158df6f", "SVDS CAA XRS DRG handguard"),
+        ("5e56991336989c75ab4f03f6", "SVDS modernized kit handguard"),
+        ("5c471c6c2e221602b66cd9ae", "SVDS standard handguard"),
+    ];
+
     // PPSh-41 枪托槽可装的全部枪托（用于与 SKS 枪身套件建立双向互斥；不含 KS-23 金属枪托）。
     private static readonly (string Id, string Label)[] Ppsh41StockConflicts =
     [
@@ -283,6 +318,8 @@ public class WeaponCrossModdingPlugin(
     private const string TkpdRailedDustCoverLabel = "TKPD railed dust cover";
     private const string Svt40Barrel625Label = "SVT-40 625mm barrel";
     private const string Svt40MuzzleStdLabel = "SVT-40 muzzle";
+    private const string SvdsRearSightBlockLabel = "SVDS rear sight block";
+    private const string SvdsBarrelLabel = "SVDS barrel";
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -304,12 +341,12 @@ public class WeaponCrossModdingPlugin(
             // CR 50DS 战术设备槽：追加 Zenit RK 系列前握把、KAC MWS 脚架转接器与 BT10 V8 Atlas 折叠脚架。
             AddItemIdsToSlot(items, Cr50DsId, Cr50DsLabel, TacticalSlotName, [.. ZenitRkForegripIds, KacMwsBipodAdapterId, Bt10AtlasBipodId]);
 
-            // PPSh-41 枪管槽：追加莫辛纳甘的全部尺寸枪管、M700 的全部 4 种枪管、ORSIS T-5000M 枪管、
-            // SKS / OP-SKS 的 520mm 枪管与 SVT-40 / AVT-40 共用的 7.62x54R 625mm 枪管。
+            // PPSh-41 枪管槽：追加莫辛纳甘 220mm 螺纹 / 514mm / 730mm 枪管、SKS / OP-SKS 的 520mm 枪管、
+            // SVT-40 / AVT-40 共用的 625mm 枪管与 SVDS 照门固定环（原莫辛 200mm、M700、ORSIS T-5000M 已移至 SVDS 照门固定环）。
             AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, BarrelSlotName,
-                MosinBarrel200Id, MosinBarrel220ThreadedId, MosinBarrel514Id, MosinBarrel730Id,
-                M700Barrel660Id, M700Barrel508ThreadedId, M700BarrelStainless660Id, M700BarrelStainless508ThreadedId, T5000Barrel660Id,
-                SksBarrel520Id, OpsksBarrel520Id, Svt40Barrel625Id);
+                MosinBarrel220ThreadedId, MosinBarrel514Id, MosinBarrel730Id,
+                SksBarrel520Id, OpsksBarrel520Id, Svt40Barrel625Id,
+                SvdsRearSightBlockId);
 
             // PPSh-41 机匣槽（mod_reciever）：追加 TAPCO Intrafuse 与 Fab Defence UAS SKS 枪身套件。
             AddItemIdsToSlot(items, Ppsh41Id, Ppsh41Label, RecieverSlotName, TapcoIntrafuseSksId, FabDefenceUasSksId);
@@ -331,6 +368,14 @@ public class WeaponCrossModdingPlugin(
             // SVT-40 625mm 枪管的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
             AddItemIdsToSlot(items, Svt40Barrel625Id, Svt40Barrel625Label, SightRearSlotName, TkpdRailedDustCoverId);
 
+            // SVDS 照门固定环的 mod_handguard 护木槽：追加莫辛 200mm、M700 全部 4 种、ORSIS T-5000M 与 SVDS 枪管。
+            AddItemIdsToSlot(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, HandguardSlotName,
+                MosinBarrel200Id, M700Barrel660Id, M700Barrel508ThreadedId, M700BarrelStainless660Id, M700BarrelStainless508ThreadedId, T5000Barrel660Id,
+                SvdsBarrelId);
+
+            // SVDS 照门固定环的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
+            AddItemIdsToSlot(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
+
             // PPSh-41 防尘盖与 HUXWRX HX-QD 消音器互不兼容。
             AddDustCoverSuppressorConflict(items);
 
@@ -348,6 +393,9 @@ public class WeaponCrossModdingPlugin(
 
             // TKPD 导轨防尘盖与 SVT-40 / AVT-40 枪本体双向互不兼容。
             AddDustCoverSvtAvtConflicts(items);
+
+            // SVDS 照门固定环引入的互斥（移植枪管、TKPD 与 SVDS 枪本体；SVDS 枪管防重；照门固定环与 PPSh-41 防尘盖）。
+            AddSvdsConflicts(items);
 
             // Aim Sports“三轨”的第一个战术配件槽：追加多种前握把、SV-98 隔热带与 Fortis Shift 前握把。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, AimSportsTriRailTacticalSlotName, [.. AimSportsTriRailForegripIds, Sv98HeatRibbonId, FortisShiftForegripId]);
@@ -500,6 +548,40 @@ public class WeaponCrossModdingPlugin(
         AddConflictingItems(items, TkpdRailedDustCoverId, TkpdRailedDustCoverLabel, Svt40WeaponId, Avt40WeaponId);
         AddConflictingItems(items, Svt40WeaponId, "SVT-40", TkpdRailedDustCoverId);
         AddConflictingItems(items, Avt40WeaponId, "AVT-40", TkpdRailedDustCoverId);
+    }
+
+    /// <summary>
+    /// SVDS 照门固定环引入的互斥（幂等）：
+    /// 移植到护木槽的枪管与 SVDS 枪本体双向互斥（避免经照门固定环装到原版 SVDS 上）；
+    /// TKPD 导轨防尘盖与 SVDS 枪本体双向互斥；SVDS 枪管与自身互斥（防止装两个）；
+    /// SVDS 照门固定环与 PPSh-41 防尘盖、TAPCO Intrafuse SKS 枪身套件双向互斥；
+    /// SVDS 照门固定环护木槽的原版护木与 PPSh-41 枪本体双向互斥。
+    /// TKPD 与 SVDS 枪管由 WTT-ContentBackport 注入，若缺失则跳过其侧。
+    /// </summary>
+    private void AddSvdsConflicts(Dictionary<MongoId, TemplateItem> items)
+    {
+        AddConflictingItems(items, SvdsWeaponId, "SVDS", [.. SvdsMovedBarrels.Select(x => x.Id)]);
+        foreach ((string barrelId, string barrelLabel) in SvdsMovedBarrels)
+        {
+            AddConflictingItems(items, barrelId, barrelLabel, SvdsWeaponId);
+        }
+
+        AddConflictingItems(items, TkpdRailedDustCoverId, TkpdRailedDustCoverLabel, SvdsWeaponId);
+        AddConflictingItems(items, SvdsWeaponId, "SVDS", TkpdRailedDustCoverId);
+
+        AddConflictingItems(items, SvdsBarrelId, SvdsBarrelLabel, SvdsBarrelId);
+
+        AddConflictingItems(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, Ppsh41DustCoverId);
+        AddConflictingItems(items, Ppsh41DustCoverId, "PPSh-41 dust cover", SvdsRearSightBlockId);
+
+        AddConflictingItems(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, TapcoIntrafuseSksId);
+        AddConflictingItems(items, TapcoIntrafuseSksId, "TAPCO Intrafuse SKS", SvdsRearSightBlockId);
+
+        AddConflictingItems(items, Ppsh41Id, Ppsh41Label, [.. SvdsHandguards.Select(x => x.Id)]);
+        foreach ((string handguardId, string handguardLabel) in SvdsHandguards)
+        {
+            AddConflictingItems(items, handguardId, handguardLabel, Ppsh41Id);
+        }
     }
 
     /// <summary>
