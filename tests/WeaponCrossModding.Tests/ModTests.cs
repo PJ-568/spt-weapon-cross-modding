@@ -99,6 +99,21 @@ public class WeaponCrossModdingPluginTests
         SksGasCoverAtiId,
     ];
 
+    private const string UltimakM1BId = "59ccfdba86f7747f2109a587";
+    private static readonly string[] SvdsGasTubeItemIds =
+    [
+        SksGasCoverOpsksStdId,
+        SksGasCoverSksWoodId,
+        SksGasCoverAtiId,
+        UltimakM1BId,
+    ];
+
+    private static readonly string[] ExclusiveGasTubeItemIds =
+    [
+        .. SksGasCoverIds,
+        UltimakM1BId,
+    ];
+
     private const string Ppsh41StockId = "5ea03e9400685063ec28bfa4";
 
     private static readonly string[] Ppsh41StockCompatIds =
@@ -488,6 +503,18 @@ public class WeaponCrossModdingPluginTests
     }
 
     [Fact]
+    public async Task AddsAlxBipod20ToUltimakM1BTacticalSlot()
+    {
+        var ultimak = ItemWithSlot("gas_block_ak_ultimak_m1b", "mod_tactical_000");
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(UltimakM1BId)] = ultimak };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(ultimak, "mod_tactical_000");
+        Assert.Equal(new MongoId(AlxBipod20Id), Assert.Single(filter));
+    }
+
+    [Fact]
     public async Task AddsMovedBarrelsAndSvdsBarrelToSvdsRearSightBlockHandguardSlot()
     {
         var block = ItemWithSlot("mount_svd_izhmash_svd_s_lower_band_std", "mod_handguard", SvdsHandguardStdId);
@@ -505,7 +532,8 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(T5000Barrel660Id), filter);
         Assert.Contains(new MongoId(SvdsBarrelId), filter);
         Assert.Contains(new MongoId(Svt40Barrel625Id), filter);
-        Assert.Equal(1 + 1 + M700BarrelIds.Length + 1 + 1 + 1, filter.Count);
+        Assert.Contains(new MongoId(SvdsRearSightBlockId), filter);
+        Assert.Equal(1 + 1 + M700BarrelIds.Length + 1 + 1 + 1 + 1, filter.Count);
     }
 
     [Fact]
@@ -519,7 +547,14 @@ public class WeaponCrossModdingPluginTests
         var filter = FilterOf(block, "mod_sight_rear");
         Assert.Contains(new MongoId(SvdsRearSightId), filter);
         Assert.Contains(new MongoId(TkpdRailedDustCoverId), filter);
-        Assert.Equal(2, filter.Count);
+        foreach (string id in SvdsGasTubeItemIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        // TAPCO 与 Fab Defence UAS 防尘盖已从该槽回退。
+        Assert.DoesNotContain(new MongoId(SksGasCoverTapcoId), filter);
+        Assert.DoesNotContain(new MongoId(SksGasCoverFabId), filter);
+        Assert.Equal(2 + SvdsGasTubeItemIds.Length, filter.Count);
     }
 
     [Fact]
@@ -854,6 +889,27 @@ public class WeaponCrossModdingPluginTests
         await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
 
         Assert.Contains(new MongoId(AlxBipod20Id), alxBipod20.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task MakesGasTubeItemsMutuallyExclusive()
+    {
+        var items = new Dictionary<MongoId, TemplateItem>();
+        foreach (string id in ExclusiveGasTubeItemIds)
+        {
+            items[new MongoId(id)] = ItemWithConflicts("gas tube item");
+        }
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        foreach (string id in ExclusiveGasTubeItemIds)
+        {
+            var conflicts = items[new MongoId(id)].Properties!.ConflictingItems!;
+            foreach (string other in ExclusiveGasTubeItemIds)
+            {
+                Assert.Contains(new MongoId(other), conflicts);
+            }
+        }
     }
 
     [Fact]

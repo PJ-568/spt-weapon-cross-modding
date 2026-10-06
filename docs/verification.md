@@ -26,11 +26,12 @@
    - 在 PPSh-41 上安装莫辛 220mm / 514mm / 730mm、SKS / OP-SKS 520mm 或 SVT-40 625mm 枪管，安装 SVDS 照门固定环，安装 M14ALCS (MOD-0) 枪托，或安装 Zveno PK 缓冲管转接器；
    - 在 PPSh-41 的机匣槽安装 TAPCO Intrafuse SKS 枪身套件或 Fab Defence UAS SKS 枪身套件；
    - 在 SVDS 照门固定环的护木槽安装莫辛 200mm、M700、ORSIS T-5000M、SVDS 枪管或 SVT-40 625mm 枪管；
-   - 在 SKS / OP-SKS 照门固定环、SVT-40 625mm 枪管或 SVDS 照门固定环的照门槽安装 TKPD 导轨防尘盖；在 SVT-40 625mm 枪管的照门槽安装 5 种 SKS 导气管防尘盖（OP-SKS 标准、SKS 木制标准、TAPCO、Fab Defence UAS、ATI Monte Carlo）；
+   - 在 SKS / OP-SKS 照门固定环或 SVDS 照门固定环的照门槽安装 TKPD 导轨防尘盖；在 SVT-40 625mm 枪管的照门槽安装 5 种 SKS 导气管防尘盖（OP-SKS 标准、SKS 木制标准、TAPCO、Fab Defence UAS、ATI Monte Carlo）；在 SVDS 照门固定环的照门槽安装 OP-SKS 标准 / SKS 木制标准 / ATI Monte Carlo 3 种导气管防尘盖或 UltiMAK M1-B AK 导气管套件；
+   - 在 SVDS 照门固定环的护木槽安装照门固定环自身；
    - 在 RPD 520mm 枪管的枪口装置槽安装 AKM PBS-1 7.62x39 消音器；
    - 在 730mm 标准莫辛枪管或 SVT-40 标准枪口装置的前准星槽安装 MDR BLK LBL ALX 脚架（16 或 20 型号）；
    - 在 AA-12 457mm 枪管的导轨槽安装 M60 脚架；
-   - 在 Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）安装 MDR BLK LBL ALX 20 脚架；
+   - 在 Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）或 UltiMAK M1-B AK 导气管套件的战术配件槽（`mod_tactical_000`）安装 MDR BLK LBL ALX 20 脚架；
    - 在 MP-18 或 Marlin MXLR 的枪托槽安装 KS-23 金属枪托；
    - 尝试同时安装 PPSh-41 防尘盖与 HUXWRX HX-QD 消音器，确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与任一非 KS-23 枪托（含 Zveno 缓冲管转接器），确认二者互斥；
@@ -44,7 +45,8 @@
    - 尝试重复安装两个 MDR BLK LBL ALX 20 脚架，确认其与自身互斥；
    - 尝试同时安装 SVDS 照门固定环与 PPSh-41 防尘盖，确认二者互斥；
    - 尝试同时安装 SVDS 照门固定环与 TAPCO Intrafuse SKS 枪身套件，确认二者互斥；
-   - 尝试把 SVDS 照门固定环护木槽可装的原版 SVDS 护木装到 PPSh-41 上，确认二者互斥。
+   - 尝试把 SVDS 照门固定环护木槽可装的原版 SVDS 护木装到 PPSh-41 上，确认二者互斥；
+   - 尝试在同一武器上安装两个不同的导气管件（5 种 SKS 导气管防尘盖与 UltiMAK M1-B 中任选两个），确认彼此互斥（每把武器最多一个）。
 4. 若修改了物品 id，重新运行单元测试确认夹具仍与代码一致。
 
 ## 排查建议
@@ -85,11 +87,12 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - mount a 220 / 514 / 730 mm Mosin, SKS / OP-SKS 520 mm or SVT-40 625 mm barrel, mount the SVDS rear sight block, mount the M14ALCS (MOD-0) buttstock, or mount the Zveno PK buffer tube adapter, on the PPSh-41;
    - mount a TAPCO Intrafuse SKS chassis kit or a Fab Defence UAS SKS chassis kit in the PPSh-41 receiver slot;
    - mount a Mosin 200 mm, M700, ORSIS T-5000M, SVDS or SVT-40 625 mm barrel in the SVDS rear sight block's handguard slot;
-   - mount the TKPD railed dust cover on the sight slot of the SKS / OP-SKS rear sight blocks, the SVT-40 625 mm barrel or the SVDS rear sight block, and the 5 SKS gas-tube covers (OP-SKS standard, SKS wooden standard, TAPCO, Fab Defence UAS, ATI Monte Carlo) on the SVT-40 625 mm barrel's sight slot;
+   - mount the TKPD railed dust cover on the sight slot of the SKS / OP-SKS rear sight blocks or the SVDS rear sight block; the 5 SKS gas-tube covers (OP-SKS standard, SKS wooden standard, TAPCO, Fab Defence UAS, ATI Monte Carlo) on the SVT-40 625 mm barrel's sight slot; and the OP-SKS standard / SKS wooden standard / ATI Monte Carlo covers or the UltiMAK M1-B AK gas tube kit on the SVDS rear sight block's sight slot;
+   - mount the SVDS rear sight block itself in its own handguard slot;
    - mount an AKM PBS-1 7.62x39 suppressor on the muzzle device slot of the RPD 520 mm barrel;
    - mount an MDR BLK LBL ALX bipod (16 or 20 model) on the front sight slot of the 730 mm standard Mosin barrel or the SVT-40 standard muzzle;
    - mount an M60 bipod on the rail slot of the AA-12 457 mm barrel;
-   - mount an MDR BLK LBL ALX 20 bipod on the lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit;
+   - mount an MDR BLK LBL ALX 20 bipod on the lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit or the tactical slot (`mod_tactical_000`) of the UltiMAK M1-B AK gas tube kit;
    - mount a KS-23 metal stock on the stock slot of the MP-18 or Marlin MXLR;
    - try mounting the PPSh-41 dust cover and a HUXWRX HX-QD suppressor together and confirm they are mutually exclusive;
    - try mounting an SKS chassis kit on the PPSh-41 together with any non-KS-23 stock (including the Zveno buffer tube adapter) and confirm they are mutually exclusive;
@@ -103,7 +106,8 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - try mounting two MDR BLK LBL ALX 20 bipods and confirm the MDR BLK LBL ALX 20 bipod is exclusive with itself;
    - try mounting the SVDS rear sight block together with the PPSh-41 dust cover and confirm they are mutually exclusive;
    - try mounting the SVDS rear sight block together with the TAPCO Intrafuse SKS chassis kit and confirm they are mutually exclusive;
-   - try mounting a vanilla SVDS handguard accepted by the SVDS rear sight block's handguard slot on the PPSh-41 and confirm they are mutually exclusive.
+   - try mounting a vanilla SVDS handguard accepted by the SVDS rear sight block's handguard slot on the PPSh-41 and confirm they are mutually exclusive;
+   - try mounting two different gas-tube items on the same weapon (any two of the 5 SKS gas-tube covers and the UltiMAK M1-B) and confirm they are mutually exclusive (at most one per weapon).
 4. If you changed any item id, re-run the unit tests to confirm the fixtures still match the code.
 
 ## Troubleshooting

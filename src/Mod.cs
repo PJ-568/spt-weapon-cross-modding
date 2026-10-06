@@ -61,7 +61,11 @@ namespace Pj568.WeaponCrossModding;
 ///  40. 让 SVDS 照门固定环的护木槽支持安装 SVT-40 625mm 枪管，且该枪管与 SVDS 枪本体双向互不兼容；
 ///  41. 让 TKPD 导轨防尘盖与自身互斥，防止重复安装；
 ///  42. 让 SVT-40 625mm 枪管的照门槽支持安装 5 种 SKS 导气管防尘盖；
-///  43. 让 MDR BLK LBL ALX 20 脚架与自身互斥，防止重复安装。
+///  43. 让 MDR BLK LBL ALX 20 脚架与自身互斥，防止重复安装；
+///  44. 让 SVDS 照门固定环的护木槽支持安装照门固定环自身；
+///  45. 让 SVDS 照门固定环的照门槽支持安装 OP-SKS 标准 / SKS 木制标准 / ATI Monte Carlo 3 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件；
+///  46. 让 5 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件彼此之间（含与自身）互不兼容，使一把武器上最多只能装一个；
+///  47. 让 UltiMAK M1-B AK 导气管套件的战术配件槽（mod_tactical_000）支持安装 MDR BLK LBL ALX 20 脚架。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -148,6 +152,9 @@ public class WeaponCrossModdingPlugin(
     // Fab Defence UAS SKS 枪身套件的下导轨（原本兼容脚架的第三个战术槽）。
     private const string FabDefenceUasLowerRailSlotName = "mod_tactical_002";
 
+    // UltiMAK M1-B AK 导气管套件的第一个战术配件槽。
+    private const string UltimakM1BTacticalSlotName = "mod_tactical_000";
+
     // UZI StormWerkz 护木底轨（mod_tactical 槽）。
     private const string StormwerkzLowerHandguardRailId = "66992f7d9950f5f4cd0602a8";
     private const string StormwerkzLowerHandguardLabel = "UZI StormWerkz lower handguard rail";
@@ -226,6 +233,9 @@ public class WeaponCrossModdingPlugin(
     private const string TapcoIntrafuseSksId = "5afd7ded5acfc40017541f5e";
     private const string FabDefenceUasSksId = "5d0236dad7ad1a0940739d29";
 
+    // UltiMAK M1-B AK 导气管套件（其 mod_tactical_000 战术配件槽承载 MDR BLK LBL ALX 20 脚架）。
+    private const string UltimakM1BId = "59ccfdba86f7747f2109a587";
+
     // 上述两个套件的枪托槽分别只接受的配件（用于与 KS-23 金属枪托建立互斥）。
     private const string TapcoIntrafuseBufferTubeId = "5afd7e095acfc40017541f61";
     private const string FabDefenceUasFoldingStockId = "653ed132896b99b40a0292e6";
@@ -284,7 +294,7 @@ public class WeaponCrossModdingPlugin(
         ("5c471c6c2e221602b66cd9ae", "SVDS standard handguard"),
     ];
 
-    // 原生 SKS 导气箍 mod_mount_000 槽可装的 5 种导气管防尘盖（用于与 MDR BLK LBL ALX 20 脚架建立双向互斥）。
+    // 原生 SKS 导气箍 mod_mount_000 槽可装的 5 种导气管防尘盖（用于 SVT-40 625mm 枪管照门槽白名单）。
     private static readonly (string Id, string Label)[] SksGasTubeCovers =
     [
         ("634f03d40384a3ba4f06f874", "OP-SKS standard gas cover"),
@@ -292,6 +302,22 @@ public class WeaponCrossModdingPlugin(
         ("653ecd065a1690d9d90491e6", "TAPCO SKS gas cover"),
         ("653ece125a1690d9d90491e8", "Fab Defence UAS SKS gas cover"),
         ("653ecc425a1690d9d90491e4", "ATI Monte Carlo SKS gas cover"),
+    ];
+
+    // SVDS 照门固定环照门槽兼容的 4 种导气管件：3 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件。
+    private static readonly (string Id, string Label)[] SvdsGasTubeItems =
+    [
+        ("634f03d40384a3ba4f06f874", "OP-SKS standard gas cover"),
+        ("634f08a21f9f536910079b5a", "SKS wooden standard gas cover"),
+        ("653ecc425a1690d9d90491e4", "ATI Monte Carlo SKS gas cover"),
+        (UltimakM1BId, "UltiMAK M1-B AK gas tube kit"),
+    ];
+
+    // 参与“一把武器最多一个”互斥的 6 种导气管件：5 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件。
+    private static readonly (string Id, string Label)[] ExclusiveGasTubeItems =
+    [
+        .. SksGasTubeCovers,
+        (UltimakM1BId, "UltiMAK M1-B AK gas tube kit"),
     ];
 
     // PPSh-41 枪托槽可装的全部枪托（用于与 SKS 枪身套件建立双向互斥；不含 KS-23 金属枪托）。
@@ -340,6 +366,7 @@ public class WeaponCrossModdingPlugin(
     private const string SvdsRearSightBlockLabel = "SVDS rear sight block";
     private const string SvdsBarrelLabel = "SVDS barrel";
     private const string FabDefenceUasSksLabel = "Fab Defence UAS SKS";
+    private const string UltimakM1BLabel = "UltiMAK M1-B AK gas tube kit";
 
     public Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -389,13 +416,14 @@ public class WeaponCrossModdingPlugin(
             AddItemIdsToSlot(items, Svt40Barrel625Id, Svt40Barrel625Label, SightRearSlotName,
                 [TkpdRailedDustCoverId, .. SksGasTubeCovers.Select(x => x.Id)]);
 
-            // SVDS 照门固定环的 mod_handguard 护木槽：追加莫辛 200mm、M700 全部 4 种、ORSIS T-5000M、SVDS 枪管与 SVT-40 625mm 枪管。
+            // SVDS 照门固定环的 mod_handguard 护木槽：追加莫辛 200mm、M700 全部 4 种、ORSIS T-5000M、SVDS 枪管、SVT-40 625mm 枪管与照门固定环自身。
             AddItemIdsToSlot(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, HandguardSlotName,
                 MosinBarrel200Id, M700Barrel660Id, M700Barrel508ThreadedId, M700BarrelStainless660Id, M700BarrelStainless508ThreadedId, T5000Barrel660Id,
-                SvdsBarrelId, Svt40Barrel625Id);
+                SvdsBarrelId, Svt40Barrel625Id, SvdsRearSightBlockId);
 
-            // SVDS 照门固定环的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖。
-            AddItemIdsToSlot(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, SightRearSlotName, TkpdRailedDustCoverId);
+            // SVDS 照门固定环的 mod_sight_rear 照门槽：追加 TKPD 导轨防尘盖与 4 种导气管件（3 种 SKS 防尘盖 + UltiMAK M1-B）。
+            AddItemIdsToSlot(items, SvdsRearSightBlockId, SvdsRearSightBlockLabel, SightRearSlotName,
+                [TkpdRailedDustCoverId, .. SvdsGasTubeItems.Select(x => x.Id)]);
 
             // PPSh-41 防尘盖与 HUXWRX HX-QD 消音器互不兼容。
             AddDustCoverSuppressorConflict(items);
@@ -424,6 +452,9 @@ public class WeaponCrossModdingPlugin(
             // MDR BLK LBL ALX 20 脚架与自身互不兼容（防止重复安装）。
             AddAlxBipod20SelfConflict(items);
 
+            // 5 种 SKS 导气管防尘盖与 UltiMAK M1-B 彼此（含与自身）互不兼容，使一把武器上最多只能装一个。
+            AddGasTubeMutualConflicts(items);
+
             // Aim Sports“三轨”的第一个战术配件槽：追加多种前握把、SV-98 隔热带与 Fortis Shift 前握把。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, AimSportsTriRailTacticalSlotName, [.. AimSportsTriRailForegripIds, Sv98HeatRibbonId, FortisShiftForegripId]);
 
@@ -435,6 +466,9 @@ public class WeaponCrossModdingPlugin(
 
             // Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）：追加 MDR BLK LBL ALX 20 脚架。
             AddItemIdsToSlot(items, FabDefenceUasSksId, FabDefenceUasSksLabel, FabDefenceUasLowerRailSlotName, AlxBipod20Id);
+
+            // UltiMAK M1-B AK 导气管套件的战术配件槽（mod_tactical_000）：追加 MDR BLK LBL ALX 20 脚架。
+            AddItemIdsToSlot(items, UltimakM1BId, UltimakM1BLabel, UltimakM1BTacticalSlotName, AlxBipod20Id);
 
             // M14ALCS (MOD-0) 枪托的握把位：追加 AR-15 Tactical Dynamics 镂空手枪式握把、
             // Tyrant Designs MOD Chevron 镂空手枪式握把（黑 / 黄 / 红）与 AS VAL Rotor 43 手枪式握把。
@@ -633,6 +667,18 @@ public class WeaponCrossModdingPlugin(
     private void AddAlxBipod20SelfConflict(Dictionary<MongoId, TemplateItem> items)
     {
         AddConflictingItems(items, AlxBipod20Id, AlxBipod20Label, AlxBipod20Id);
+    }
+
+    /// <summary>
+    /// 让 5 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件彼此之间（含与自身）互不兼容（幂等），使一把武器上最多只能装一个。
+    /// </summary>
+    private void AddGasTubeMutualConflicts(Dictionary<MongoId, TemplateItem> items)
+    {
+        string[] ids = [.. ExclusiveGasTubeItems.Select(x => x.Id)];
+        foreach ((string id, string label) in ExclusiveGasTubeItems)
+        {
+            AddConflictingItems(items, id, label, ids);
+        }
     }
 
     /// <summary>
