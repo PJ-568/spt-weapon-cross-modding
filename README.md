@@ -2,6 +2,8 @@
 
 > 一个 SPT 4.1.x 服务端插件：往目标物品槽的过滤器白名单里追加配件 id，让指定武器、瞄具、枪托与握把实现跨武器兼容。
 
+![PPSh-41 满配跨武器改装展示](assets/PPSh-MDR.webp)
+
 本插件在服务端加载时，向目标物品槽的 `Slot.Properties.Filters[].Filter`（`HashSet<MongoId>`）白名单追加物品 id；
 对互斥关系，则往 `TemplateItem.Properties.ConflictingItems` 追加物品 id。
 所有注入均幂等：id 已存在时不重复添加。
@@ -39,6 +41,8 @@ SPT `4.1.x`。
 # PJ568's Weapon Cross Modding
 
 > An SPT 4.1.x server plugin that appends accessory ids to slot filter whitelists, enabling cross-weapon compatibility between selected weapons, optics, stocks and grips.
+
+![PPSh-41 fully-kitted cross-weapon build showcase](assets/PPSh-MDR.webp)
 
 On load, the plugin appends item ids to the `Slot.Properties.Filters[].Filter` (`HashSet<MongoId>`) whitelist of the target item slots;
 for mutual exclusions, it appends item ids to `TemplateItem.Properties.ConflictingItems`.
