@@ -27,7 +27,7 @@
 - Aim Sports“三轨”的第一个战术配件槽（`mod_tactical_000`）：新增 13 款前握把（Zenit RK 系列、镂空型、垂直型、BCM MOD.3、TangoDown Stubby BGV-MK46K；不含 KeyMod / M-LOK 型）、SV-98 隔热带与 Fortis Shift 战术前握把。
 - Aim Sports“三轨”的第二个战术配件槽（`mod_tactical_001`）：新增 SV-98 隔热带。
 - UZI StormWerkz 护木底轨的 `mod_tactical` 槽：新增 Zenit RK 系列前握把。
-- Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）：新增 MDR BLK LBL ALX 20 脚架（由 `WTT-ContentBackport` 注入）。
+- Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）：新增 MDR BLK LBL ALX 20 脚架（由 `WTT-ContentBackport` 注入）与 AK-100 系列聚合物护木兼容的全部前握把（含 Zenit RK 系列、BCM MOD.3、KAC、ASh-12、Tactical Dynamics 镂空、TangoDown Stubby BGV-MK46K 三色、Fortis Shift 等 33 种）。
 - UltiMAK M1-B AK 导气管套件的战术配件槽（`mod_tactical_000`）：新增 MDR BLK LBL ALX 20 脚架（由 `WTT-ContentBackport` 注入）。
 - CR 50DS 的 `mod_tactical` 战术设备槽：新增 Zenit RK 系列前握把、KAC MWS 脚架转接器与 BT10 V8 Atlas 折叠脚架。
 - M14 SAGE International M14ALCS (MOD-0) 枪托的 `mod_pistol_grip` 握把位：新增 AR-15 Tactical Dynamics 镂空手枪式握把、Tyrant Designs MOD Chevron AR-15 镂空手枪式握把（黑 / 黄 / 红）与 AS VAL Rotor 43 手枪式握把附缓冲管转接器。
@@ -81,7 +81,7 @@
 - First tactical slot (`mod_tactical_000`) of the Aim Sports tri-rail: adds 13 foregrips (Zenit RK series, skeletonized, vertical, BCM MOD.3, TangoDown Stubby BGV-MK46K; excluding KeyMod / M-LOK types), the SV-98 heat ribbon and the Fortis Shift tactical foregrip.
 - Second tactical slot (`mod_tactical_001`) of the Aim Sports tri-rail: adds the SV-98 heat ribbon.
 - `mod_tactical` slot of the UZI StormWerkz lower handguard rail: adds the Zenit RK series foregrips.
-- Lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit: adds the MDR BLK LBL ALX 20 bipod (injected by `WTT-ContentBackport`).
+- Lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit: adds the MDR BLK LBL ALX 20 bipod (injected by `WTT-ContentBackport`) and all foregrips compatible with the AK-100 series polymer handguards (Zenit RK series, BCM MOD.3, KAC, ASh-12, Tactical Dynamics skeletonized, TangoDown Stubby BGV-MK46K in three colors, Fortis Shift, and 25 others, 33 total).
 - Tactical slot (`mod_tactical_000`) of the UltiMAK M1-B AK gas tube kit: adds the MDR BLK LBL ALX 20 bipod (injected by `WTT-ContentBackport`).
 - `mod_tactical` slot of the CR 50DS: adds the Zenit RK series foregrips, the KAC MWS bipod adapter and the BT10 V8 Atlas folding bipod.
 - `mod_pistol_grip` slot of the M14 SAGE International M14ALCS (MOD-0) buttstock: adds the AR-15 Tactical Dynamics skeletonized pistol grip, the Tyrant Designs MOD Chevron AR-15 skeletonized pistol grips (black / yellow / red) and the AS VAL Rotor 43 pistol grip with buffer tube adapter.

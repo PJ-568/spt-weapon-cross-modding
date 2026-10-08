@@ -190,6 +190,49 @@ public class WeaponCrossModdingPlugin(
     private const string Sv98HeatRibbonId = "56083eab4bdc2d26448b456a"; // SV-98 隔热带（anti-heat ribbon）
     private const string FortisShiftForegripId = "59f8a37386f7747af3328f06"; // Fortis Shift 战术前握把
 
+    // AK-100 系列聚合物护木（handguard_ak_izhmash_ak100_rail_plastic）的 mod_foregrip 槽兼容的全部前握把。
+    private static readonly string[] Ak100PolymerHandguardForegripIds =
+    [
+        // 垂直前握把
+        "5c7fc87d2e221644f31c0298", // BCM GUNFIGHTER MOD 3 vertical
+        "5cda9bcfd7f00c0c0b53e900", // ASh-12 vertical
+        "5c87ca002e221600114cb150", // KAC vertical
+        // Zenit RK 系列
+        "5c1bc4812e22164bef5cfde7", // RK-0
+        "5c1bc5612e221602b5429350", // RK-1
+        "5c1bc5af2e221602b412949b", // RK-2
+        "5c1bc5fb2e221602b1779b32", // RK-4
+        "5c1bc7432e221602b412949d", // RK-5
+        "5c1bc7752e221602b1779b34", // RK-6
+        // 镂空前握把
+        "5f6340d3ca442212f4047eb2", // Tactical Dynamics 镂空前握把
+        // TangoDown Stubby BGV-MK46K
+        "558032614bdc2de7118b4585", // (Black)
+        "58c157be86f77403c74b2bb6", // (FDE)
+        "58c157c886f774032749fb06", // (Stealth Grey)
+        // 其它前握把
+        "59f8a37386f7747af3328f06", // Fortis Shift 战术前握把
+        "619386379fb0c665d5490dbe",
+        "59fc48e086f77463b1118392",
+        "5fce0cf655375d18a253eff0",
+        "5cf4fb76d7f00c065703d3ac",
+        "5b057b4f5acfc4771e1bd3e9",
+        "5c791e872e2216001219c40a",
+        "591af28e86f77414a27a9e1d",
+        "5c1cd46f2e22164bef5cfedb",
+        // 较新增前握把（可能来自更新或模组）
+        "64806bdd26c80811d408d37a",
+        "64807a29e5ffe165600abc97",
+        "648067db042be0705c0b3009",
+        "65169d5b30425317755f8e25",
+        "655df24fdf80b12750626d0a",
+        "655dccfdbdcc6b5df71382b6",
+        "661e52e29c8b4dadef008577",
+        "661e53149c8b4dadef008579",
+        "661e52415be02310ed07a07a",
+        "661e52b5b099f32c28003586",
+    ];
+
     // M14 SAGE International M14ALCS (MOD-0) 枪托的握把位兼容的握把。
     private const string M14AlcsPistolGripSlotName = "mod_pistol_grip";
     private const string TacticalDynamicsSkeletonizedGripId = "5b07db875acfc40dc528a5f6"; // AR-15 Tactical Dynamics 镂空手枪式握把
@@ -464,8 +507,8 @@ public class WeaponCrossModdingPlugin(
             // Aim Sports“三轨”的瞄具槽：追加 M14 DCSB 瞄具基座。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, ScopeSlotName, M14DcsbMountId);
 
-            // Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）：追加 MDR BLK LBL ALX 20 脚架。
-            AddItemIdsToSlot(items, FabDefenceUasSksId, FabDefenceUasSksLabel, FabDefenceUasLowerRailSlotName, AlxBipod20Id);
+            // Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）：追加 MDR BLK LBL ALX 20 脚架与 AK-100 聚合物护木兼容的全部前握把。
+            AddItemIdsToSlot(items, FabDefenceUasSksId, FabDefenceUasSksLabel, FabDefenceUasLowerRailSlotName, [AlxBipod20Id, .. Ak100PolymerHandguardForegripIds]);
 
             // UltiMAK M1-B AK 导气管套件的战术配件槽（mod_tactical_000）：追加 MDR BLK LBL ALX 20 脚架。
             AddItemIdsToSlot(items, UltimakM1BId, UltimakM1BLabel, UltimakM1BTacticalSlotName, AlxBipod20Id);

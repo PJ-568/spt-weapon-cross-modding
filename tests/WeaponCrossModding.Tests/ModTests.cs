@@ -499,7 +499,13 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(Bt10AtlasBipodId), filter);
         Assert.Contains(new MongoId(AlxBipod20Id), filter);
         Assert.DoesNotContain(new MongoId(AlxBipod16Id), filter);
-        Assert.Equal(2, filter.Count);
+        // 2 个原有项目 (BT10 Atlas 脚架 + ALX 20 脚架) + 32 个 AK-100 聚合物护木兼容前握把
+        Assert.Equal(2 + 32, filter.Count);
+        // 验证部分 AK-100 前握把已注入
+        Assert.Contains(new MongoId("5c7fc87d2e221644f31c0298"), filter); // BCM GUNFIGHTER MOD 3 vertical
+        Assert.Contains(new MongoId("5c1bc4812e22164bef5cfde7"), filter); // Zenit RK-0
+        Assert.Contains(new MongoId("5f6340d3ca442212f4047eb2"), filter); // Tactical Dynamics 镂空前握把
+        Assert.Contains(new MongoId("558032614bdc2de7118b4585"), filter); // TangoDown Stubby BGV-MK46K (Black)
     }
 
     [Fact]
