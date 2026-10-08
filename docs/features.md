@@ -10,6 +10,7 @@
 - SKS / OP-SKS 照门固定环的 `mod_sight_rear` 照门槽：新增 TKPD 导轨防尘盖。
 - SVT-40 625mm 枪管的 `mod_sight_rear` 照门槽：新增 TKPD 导轨防尘盖与 5 种 SKS 导气管防尘盖（OP-SKS 标准、SKS 木制标准、TAPCO、Fab Defence UAS、ATI Monte Carlo；即原生 SKS 导气箍可装的那 5 种）。
 - SVDS 照门固定环的 `mod_sight_rear` 照门槽：新增 TKPD 导轨防尘盖、3 种 SKS 导气管防尘盖（OP-SKS 标准、SKS 木制标准、ATI Monte Carlo）与 UltiMAK M1-B AK 导气管套件。
+- Alpha Dog Alpha 9 9x19 声音抑制器的 `mod_scope` 槽：新增 M14 SAGE International DCSB 瞄具基座。
 
 ## 枪管与枪托
 
@@ -21,6 +22,10 @@
 - RPD 520mm 枪管的 `mod_muzzle` 枪口装置槽：新增 AKM PBS-1 7.62x39 消音器。
 - AA-12 457mm 枪管的 `mod_mount` 导轨槽：新增 M60 脚架。
 - MP-18 与 Marlin MXLR 的 `mod_stock` 枪托槽：新增 KS-23 金属枪托。
+
+## 弹药与口径
+
+- 20x1mm 玩具枪（`weapon_ussr_pd_20x1mm`）与其原装弹匣（`mag_pd_ussr_toygun_std_20x1mm_18`）：在保留原 20x1mm 玩具弹能力的同时，新增对全部 7 种 7.62x25 托卡列夫弹药（AKBS、FMJ43、LRN、LRNPC、P Gl、Pst gzh、T Gzh）的兼容。做法是向武器膛室（`Chambers`）与弹匣装填位（`Cartridges`）白名单追加弹药 id，不改动武器单值 `ammoCaliber`。
 
 ## 握把与配件
 
@@ -64,6 +69,7 @@
 - `mod_sight_rear` sight slot of the SKS / OP-SKS rear sight blocks: adds the TKPD railed dust cover.
 - `mod_sight_rear` sight slot of the SVT-40 625 mm barrel: adds the TKPD railed dust cover and the 5 SKS gas-tube covers (OP-SKS standard, SKS wooden standard, TAPCO, Fab Defence UAS, ATI Monte Carlo; the five accepted by the native SKS gas block).
 - `mod_sight_rear` sight slot of the SVDS rear sight block: adds the TKPD railed dust cover, the 3 SKS gas-tube covers (OP-SKS standard, SKS wooden standard, ATI Monte Carlo) and the UltiMAK M1-B AK gas tube kit.
+- `mod_scope` slot of the Alpha Dog Alpha 9 9x19 sound suppressor: adds the M14 SAGE International DCSB scope mount.
 
 ## Barrels and stocks
 
@@ -75,6 +81,10 @@
 - `mod_muzzle` muzzle device slot of the RPD 520 mm barrel: adds the AKM PBS-1 7.62x39 suppressor.
 - `mod_mount` rail slot of the AA-12 457 mm barrel: adds the M60 bipod.
 - `mod_stock` slot of the MP-18 and Marlin MXLR: adds the KS-23 metal stock.
+
+## Ammunition and caliber
+
+- 20x1mm toy gun (`weapon_ussr_pd_20x1mm`) and its stock magazine (`mag_pd_ussr_toygun_std_20x1mm_18`): while keeping the original 20x1mm toy-round capability, adds compatibility with all 7 types of 7.62x25 Tokarev ammunition (AKBS, FMJ43, LRN, LRNPC, P Gl, Pst gzh, T Gzh). It appends the ammo ids to the weapon's chamber (`Chambers`) and the magazine's cartridge (`Cartridges`) whitelists without touching the weapon's single-value `ammoCaliber`.
 
 ## Grips and accessories
 

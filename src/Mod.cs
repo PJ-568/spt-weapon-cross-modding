@@ -66,6 +66,9 @@ namespace Pj568.WeaponCrossModding;
 ///  45. 让 SVDS 照门固定环的照门槽支持安装 OP-SKS 标准 / SKS 木制标准 / ATI Monte Carlo 3 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件；
 ///  46. 让 5 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件彼此之间（含与自身）互不兼容，使一把武器上最多只能装一个；
 ///  47. 让 UltiMAK M1-B AK 导气管套件的战术配件槽（mod_tactical_000）支持安装 MDR BLK LBL ALX 20 脚架。
+///  48. 让 20x1mm 玩具枪与其原装弹匣在保留 20x1mm 能力的同时支持全部 7 种 7.62x25 托卡列夫弹药
+///      （只补膛室与弹匣装填位白名单，不动武器单值 ammoCaliber）。
+///  49. 让 Alpha Dog Alpha 9 9x19 声音抑制器的 mod_scope 槽支持安装 M14 SAGE International DCSB 瞄具基座。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -135,6 +138,10 @@ public class WeaponCrossModdingPlugin(
 
     // M14 SAGE International DCSB 瞄具基座。
     private const string M14DcsbMountId = "5addbffe5acfc4001714dfac";
+
+    // Alpha Dog Alpha 9 9x19 声音抑制器（其 mod_scope 槽承载 M14 DCSB 瞄具基座）。
+    private const string AlphaDogSuppressorId = "5a33a8ebc4a282000c5a950d";
+    private const string AlphaDogSuppressorLabel = "Alpha Dog 9x19 suppressor";
 
     // PPSh-41 防尘盖（mod_reciever 槽承载物品）。
     private const string Ppsh41DustCoverId = "5ea03e5009aa976f2e7a514b";
@@ -291,6 +298,25 @@ public class WeaponCrossModdingPlugin(
 
     // PPSh-41 7.62x25 71 发弹鼓。
     private const string Ppsh71DrumMagId = "5ea034f65aad6446a939737e";
+
+    // 20x1mm 玩具枪（weapon_ussr_pd_20x1mm）与其原装弹匣（mag_pd_ussr_toygun_std_20x1mm_18）。
+    // 实验性最小改法：只往膛室与弹匣装填位白名单追加 7.62x25，不动单值 ammoCaliber，故保留原 20x1mm 能力。
+    private const string ToyGunId = "66015072e9f84d5680039678";
+    private const string ToyGunMagId = "66015dc4aaad2f54cb04c56a";
+    private const string ToyGunLabel = "20x1mm toy gun";
+    private const string ToyGunMagLabel = "20x1mm toy gun magazine";
+
+    // 7.62x25 托卡列夫弹药（Caliber762x25TT）全部 7 种。
+    private static readonly (string Id, string Label)[] Caliber762x25Ammo =
+    [
+        ("5735fdcd2459776445391d61", "AKBS"),
+        ("5735ff5c245977640e39ba7e", "FMJ43"),
+        ("573601b42459776410737435", "LRN"),
+        ("573602322459776445391df1", "LRNPC"),
+        ("5736026a245977644601dc61", "P Gl"),
+        ("573603562459776430731618", "Pst gzh"),
+        ("573603c924597764442bd9cb", "T Gzh"),
+    ];
 
     // SKS / OP-SKS 照门固定环（mod_sight_rear 照门槽宿主）与 TKPD 导轨防尘盖（由 WTT 注入）。
     private const string SksRearSightBlockId = "634f04d82e5def262d0b30c6";
@@ -507,6 +533,9 @@ public class WeaponCrossModdingPlugin(
             // Aim Sports“三轨”的瞄具槽：追加 M14 DCSB 瞄具基座。
             AddItemIdsToSlot(items, AimSportsTriRailId, AimSportsTriRailLabel, ScopeSlotName, M14DcsbMountId);
 
+            // Alpha Dog 9x19 声音抑制器的 mod_scope 槽：追加 M14 DCSB 瞄具基座。
+            AddItemIdsToSlot(items, AlphaDogSuppressorId, AlphaDogSuppressorLabel, ScopeSlotName, M14DcsbMountId);
+
             // Fab Defence UAS SKS 枪身套件的下导轨（mod_tactical_002）：追加 MDR BLK LBL ALX 20 脚架与 AK-100 聚合物护木兼容的全部前握把。
             AddItemIdsToSlot(items, FabDefenceUasSksId, FabDefenceUasSksLabel, FabDefenceUasLowerRailSlotName, [AlxBipod20Id, .. Ak100PolymerHandguardForegripIds]);
 
@@ -530,6 +559,11 @@ public class WeaponCrossModdingPlugin(
             // MP-18 与 Marlin MXLR 的 mod_stock 枪托槽：追加 KS-23 金属枪托。
             AddItemIdsToSlot(items, Mp18RifleId, Mp18RifleLabel, StockSlotName, Ks23MetalStockId);
             AddItemIdsToSlot(items, MarlinMxlrId, MarlinMxlrLabel, StockSlotName, Ks23MetalStockId);
+
+            // 20x1mm 玩具枪与其原装弹匣：在原有 20x1mm 能力之上，追加 7.62x25 托卡列夫全部 7 种弹药。
+            // 只补 Chambers / Cartridges 白名单，不改 ammoCaliber；能否实际开火由实机验证判定。
+            AddAmmoIdsToContainer(items, ToyGunId, ToyGunLabel, isChamber: true, [.. Caliber762x25Ammo.Select(x => x.Id)]);
+            AddAmmoIdsToContainer(items, ToyGunMagId, ToyGunMagLabel, isChamber: false, [.. Caliber762x25Ammo.Select(x => x.Id)]);
         }
         catch (Exception ex)
         {
@@ -575,6 +609,48 @@ public class WeaponCrossModdingPlugin(
                 foreach (string itemId in itemIds)
                 {
                     AddToFilter(filter, itemId, owner, slot);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 往 <paramref name="ownerId"/> 的膛室（Chambers）或弹匣装填位（Cartridges）各 Filter 追加弹药 id（幂等）。
+    /// 这两者都是 <see cref="Slot"/> 列表，其 <c>Properties.Filters[].Filter</c> 决定可容纳的弹药模板。
+    /// </summary>
+    private void AddAmmoIdsToContainer(
+        Dictionary<MongoId, TemplateItem> items,
+        string ownerId,
+        string ownerLabel,
+        bool isChamber,
+        params string[] ammoIds)
+    {
+        if (!items.TryGetValue(ownerId, out TemplateItem? owner))
+        {
+            logger.Warning($"WeaponCrossModding: {ownerLabel} id '{ownerId}' not found in Items");
+            return;
+        }
+
+        IEnumerable<Slot>? containers = isChamber ? owner.Properties?.Chambers : owner.Properties?.Cartridges;
+        if (containers is null)
+        {
+            logger.Warning($"WeaponCrossModding: {ownerLabel} has no {(isChamber ? "chambers" : "cartridges")}");
+            return;
+        }
+
+        foreach (Slot container in containers.Where(c => c is not null))
+        {
+            IEnumerable<SlotFilter>? filters = container.Properties?.Filters;
+            if (filters is null)
+            {
+                continue;
+            }
+
+            foreach (SlotFilter filter in filters)
+            {
+                foreach (string ammoId in ammoIds)
+                {
+                    AddToFilter(filter, ammoId, owner, container);
                 }
             }
         }

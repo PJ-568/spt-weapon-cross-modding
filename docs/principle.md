@@ -4,7 +4,7 @@
 
 ## 数据模型
 
-SPT 服务端把所有物品模板存放在 `TemplateTable.Items`（`Dictionary<MongoId, TemplateItem>`）中。与兼容性相关的字段有两处：
+SPT 服务端把所有物品模板存放在 `TemplateTable.Items`（`Dictionary<MongoId, TemplateItem>`）中。与兼容性相关的字段有三处：
 
 ### 槽位过滤器
 
@@ -15,6 +15,15 @@ SPT 服务端把所有物品模板存放在 `TemplateTable.Items`（`Dictionary<
 - `SlotFilter.Filter`：`HashSet<MongoId>`，即该槽位允许安装的物品 id 白名单。
 
 **要让一件物品能装进某个槽位，就是把这个物品的 id 加进该槽位过滤器的白名单。**
+
+### 弹药容器
+
+除槽位外，武器与弹匣还各有一个「弹药容器」，其结构与槽位一致（同样是 `Slot` 列表，同样有 `Properties.Filters[].Filter`）：
+
+- 武器：`Properties.Chambers`（膛室，`Slot.Name` 为 `patron_in_weapon`），决定能上膛的弹药模板。
+- 弹匣：`Properties.Cartridges`（装填位，`Slot.Name` 为 `cartridges`），决定能装填的弹药模板。
+
+**要让武器或弹匣接受某种弹药，就是把这个弹药的模板 id 加进对应容器的过滤器白名单。**
 
 ### 冲突列表
 
@@ -31,7 +40,8 @@ SPT 服务端把所有物品模板存放在 `TemplateTable.Items`（`Dictionary<
    - 若宿主 id 不在 `Items` 中，记警告并跳过；若宿主没有槽位，记警告并跳过。
    - 按槽位名（`OrdinalIgnoreCase`）找到宿主的所有同名槽。
    - 对每个槽的每个 `SlotFilter`，把各 id 加入 `Filter`。
-3. 对每一组互斥关系，调用 `AddConflictingItems`，把冲突 id 加入宿主物品的 `ConflictingItems`。
+3. 对每一组「宿主物品 + 弹药容器 + 待追加弹药 id」，调用 `AddAmmoIdsToContainer`，逻辑与上一步相同，只是把目标槽换成武器的 `Chambers` 或弹匣的 `Cartridges`。
+4. 对每一组互斥关系，调用 `AddConflictingItems`，把冲突 id 加入宿主物品的 `ConflictingItems`。
 4. 整个过程包在 `try/catch` 中：任何异常都被记录为 `error`，不会中断服务端启动。
 
 ## 幂等
@@ -67,7 +77,7 @@ SPT 服务端把所有物品模板存放在 `TemplateTable.Items`（`Dictionary<
 
 ## Data Model
 
-The SPT server stores every item template in `TemplateTable.Items` (`Dictionary<MongoId, TemplateItem>`). Two fields are relevant to compatibility:
+The SPT server stores every item template in `TemplateTable.Items` (`Dictionary<MongoId, TemplateItem>`). Three fields are relevant to compatibility:
 
 ### Slot filters
 
@@ -78,6 +88,15 @@ Each `TemplateItem`'s `Properties.Slots` is a list of `Slot`. Every `Slot` has:
 - `SlotFilter.Filter`: a `HashSet<MongoId>`, the whitelist of item ids the slot accepts.
 
 **Making an item fit a slot means adding that item's id to the slot filter's whitelist.**
+
+### Ammo containers
+
+Besides slots, weapons and magazines each have an "ammo container" with the same structure as a slot (also a list of `Slot`, also with `Properties.Filters[].Filter`):
+
+- Weapon: `Properties.Chambers` (the chamber, `Slot.Name` is `patron_in_weapon`), which determines the ammo templates that can be chambered.
+- Magazine: `Properties.Cartridges` (the loading position, `Slot.Name` is `cartridges`), which determines the ammo templates that can be loaded.
+
+**Making a weapon or magazine accept an ammo type means adding that ammo's template id to the corresponding container filter's whitelist.**
 
 ### Conflict list
 
@@ -94,7 +113,8 @@ The plugin entry implements `IOnLoad` and is registered with `[Injectable(Inject
    - If the owner id is missing from `Items`, log a warning and skip; if the owner has no slots, log a warning and skip.
    - Find all same-named slots (case-insensitive, `OrdinalIgnoreCase`).
    - For every `SlotFilter` of every matching slot, add the ids to `Filter`.
-3. For each mutual exclusion, call `AddConflictingItems` to add the conflicting id to the owner item's `ConflictingItems`.
+3. For each group of "owner item + ammo container + ammo ids to add", call `AddAmmoIdsToContainer`, which works exactly like the previous step but targets the weapon's `Chambers` or the magazine's `Cartridges` instead of a slot.
+4. For each mutual exclusion, call `AddConflictingItems` to add the conflicting id to the owner item's `ConflictingItems`.
 4. The whole process is wrapped in `try/catch`: any exception is logged as `error` and never interrupts server startup.
 
 ## Idempotency

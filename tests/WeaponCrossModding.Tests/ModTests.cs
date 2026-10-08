@@ -136,6 +136,7 @@ public class WeaponCrossModdingPluginTests
     private const string StormwerkzLowerHandguardRailId = "66992f7d9950f5f4cd0602a8";
 
     private const string M14DcsbMountId = "5addbffe5acfc4001714dfac";
+    private const string AlphaDogSuppressorId = "5a33a8ebc4a282000c5a950d";
 
     private const string Sv98HeatRibbonId = "56083eab4bdc2d26448b456a";
     private const string FortisShiftForegripId = "59f8a37386f7747af3328f06";
@@ -154,6 +155,21 @@ public class WeaponCrossModdingPluginTests
     private const string Mp18StockExistingBId = "61f7b234ea4ab34f2f59c3ec";
     private const string MarlinMxlrId = "67c6de3ce39861860909e8e5";
     private const string Ks23MetalStockId = "5e848dc4e4dbc5266a4ec63d";
+
+    // 20x1mm 玩具枪、其原装弹匣与玩具弹，以及 7.62x25 托卡列夫全部 7 种弹药。
+    private const string ToyGunId = "66015072e9f84d5680039678";
+    private const string ToyGunMagId = "66015dc4aaad2f54cb04c56a";
+    private const string ToyAmmoId = "6601546f86889319850bd566";
+    private static readonly string[] Caliber762x25AmmoIds =
+    [
+        "5735fdcd2459776445391d61", // AKBS
+        "5735ff5c245977640e39ba7e", // FMJ43
+        "573601b42459776410737435", // LRN
+        "573602322459776445391df1", // LRNPC
+        "5736026a245977644601dc61", // P Gl
+        "573603562459776430731618", // Pst gzh
+        "573603c924597764442bd9cb", // T Gzh
+    ];
 
     // Marlin MXLR .308 ME 杠杆步枪 mod_stock 槽的真实初始 filter。
     private static readonly string[] MarlinMxlrStockIds =
@@ -243,6 +259,31 @@ public class WeaponCrossModdingPluginTests
         Name = name,
         Properties = new TemplateItemProperties { ConflictingItems = [] },
     };
+
+    // 构造带膛室（Chambers）或弹匣装填位（Cartridges）的物品；二者结构均为 Slot 过滤器列表。
+    private static TemplateItem ItemWithAmmoContainer(string name, bool isChamber, params string[] initialFilter)
+    {
+        var filter = new SlotFilter
+        {
+            Filter = new HashSet<MongoId>(initialFilter.Select(id => new MongoId(id))),
+        };
+        var container = new Slot
+        {
+            Name = isChamber ? "patron_in_weapon" : "cartridges",
+            Properties = new SlotProperties { Filters = [filter] },
+        };
+        return new TemplateItem
+        {
+            Name = name,
+            Properties = isChamber
+                ? new TemplateItemProperties { Chambers = [container] }
+                : new TemplateItemProperties { Cartridges = [container] },
+        };
+    }
+
+    private static HashSet<MongoId> AmmoFilterOf(TemplateItem item, bool isChamber) =>
+        (isChamber ? item.Properties!.Chambers! : item.Properties!.Cartridges!)
+            .Single().Properties!.Filters!.Single().Filter!;
 
     private static HashSet<MongoId> FilterOf(TemplateItem item, string slotName) =>
         item.Properties!.Slots!.Single(s => s.Name == slotName).Properties!.Filters!.Single().Filter!;
@@ -980,6 +1021,77 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(FabDefenceUasFoldingStockId), ks23.Properties!.ConflictingItems!);
         Assert.Contains(new MongoId(Ks23MetalStockId), tapcoTube.Properties!.ConflictingItems!);
         Assert.Contains(new MongoId(Ks23MetalStockId), fabStock.Properties!.ConflictingItems!);
+    }
+
+    [Fact]
+    public async Task AddsCaliber762x25ToToyGunChambersKeeping20x1mm()
+    {
+        var gun = ItemWithAmmoContainer("weapon_ussr_pd_20x1mm", isChamber: true, ToyAmmoId);
+        gun.Properties!.AmmoCaliber = "Caliber20x1mm";
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(ToyGunId)] = gun };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = AmmoFilterOf(gun, isChamber: true);
+        Assert.Contains(new MongoId(ToyAmmoId), filter);
+        foreach (string id in Caliber762x25AmmoIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length, filter.Count);
+
+        // 实验性最小改法：不动单值 ammoCaliber，仅补白名单，故 20x1mm 能力保留。
+        Assert.Equal("Caliber20x1mm", gun.Properties.AmmoCaliber);
+    }
+
+    [Fact]
+    public async Task AddsCaliber762x25ToToyGunMagazineCartridgesKeeping20x1mm()
+    {
+        var mag = ItemWithAmmoContainer("mag_pd_ussr_toygun_std_20x1mm_18", isChamber: false, ToyAmmoId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(ToyGunMagId)] = mag };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = AmmoFilterOf(mag, isChamber: false);
+        Assert.Contains(new MongoId(ToyAmmoId), filter);
+        foreach (string id in Caliber762x25AmmoIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length, filter.Count);
+    }
+
+    [Fact]
+    public async Task ToyGunAmmoInjectionIsIdempotent()
+    {
+        var gun = ItemWithAmmoContainer("weapon_ussr_pd_20x1mm", isChamber: true, ToyAmmoId);
+        var mag = ItemWithAmmoContainer("mag_pd_ussr_toygun_std_20x1mm_18", isChamber: false, ToyAmmoId);
+        var items = new Dictionary<MongoId, TemplateItem>
+        {
+            [new MongoId(ToyGunId)] = gun,
+            [new MongoId(ToyGunMagId)] = mag,
+        };
+        var plugin = BuildPlugin(items);
+
+        await plugin.OnLoadAsync(CancellationToken.None);
+        await plugin.OnLoadAsync(CancellationToken.None);
+
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length, AmmoFilterOf(gun, isChamber: true).Count);
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length, AmmoFilterOf(mag, isChamber: false).Count);
+    }
+
+    [Fact]
+    public async Task AddsM14DcsbMountToAlphaDogScopeSlot()
+    {
+        var alphaDog = ItemWithSlot("silencer_all_alpha_dog_alpha_9_9x19", "mod_scope", "58d39d3d86f77445bb794ae7");
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(AlphaDogSuppressorId)] = alphaDog };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(alphaDog, "mod_scope");
+        Assert.Contains(new MongoId("58d39d3d86f77445bb794ae7"), filter);
+        Assert.Contains(new MongoId(M14DcsbMountId), filter);
+        Assert.Equal(2, filter.Count);
     }
 
     [Fact]

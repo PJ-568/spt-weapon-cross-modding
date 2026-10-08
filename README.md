@@ -1,6 +1,6 @@
 # PJ568's Weapon Cross Modding
 
-> 一个 SPT 4.1.x 服务端插件：往目标物品槽的过滤器白名单里追加配件 id，让指定武器、瞄具、枪托与握把实现跨武器兼容。
+> 一个 SPT 4.1.x 服务端插件：往目标物品槽的过滤器白名单里追加配件 id，让指定武器、瞄具、枪托与握把实现跨武器兼容；并让 20x1mm 玩具枪与其弹匣在保留玩具弹的同时兼容 7.62x25 托卡列夫弹药。
 
 ![PPSh-41 满配跨武器改装展示](assets/PPSh-MDR.webp)
 
@@ -38,7 +38,7 @@ SPT `4.1.x`。
 
 # PJ568's Weapon Cross Modding
 
-> An SPT 4.1.x server plugin that appends accessory ids to slot filter whitelists, enabling cross-weapon compatibility between selected weapons, optics, stocks and grips.
+> An SPT 4.1.x server plugin that appends accessory ids to slot filter whitelists, enabling cross-weapon compatibility between selected weapons, optics, stocks and grips; it also lets the 20x1mm toy gun and its magazine accept 7.62x25 Tokarev ammunition while keeping the toy rounds.
 
 ![PPSh-41 fully-kitted cross-weapon build showcase](assets/PPSh-MDR.webp)
 

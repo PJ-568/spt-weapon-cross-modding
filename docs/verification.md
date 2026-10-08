@@ -14,7 +14,7 @@
 [Info][...] WeaponCrossModding: added '<物品 id>' to slot '<槽位名>' (<宿主物品名>)
 ```
 
-槽位名应涵盖 `mod_scope`、`mod_sight_front`、`mod_sight_rear`、`mod_barrel`、`mod_stock`、`mod_tactical`、`mod_tactical_000`、`mod_tactical_001`、`mod_pistol_grip`、`mod_mount`、`mod_muzzle`、`mod_reciever`；互斥关系另会输出 `added conflicting item '…' to '…'`。
+槽位名应涵盖 `mod_scope`、`mod_sight_front`、`mod_sight_rear`、`mod_barrel`、`mod_stock`、`mod_tactical`、`mod_tactical_000`、`mod_tactical_001`、`mod_pistol_grip`、`mod_mount`、`mod_muzzle`、`mod_reciever`；弹药注入使用 `patron_in_weapon`（武器膛室）与 `cartridges`（弹匣装填位）两个槽名；互斥关系另会输出 `added conflicting item '…' to '…'`。
 
 ## 验证步骤
 
@@ -28,11 +28,13 @@
    - 在 SVDS 照门固定环的护木槽安装莫辛 200mm、M700、ORSIS T-5000M、SVDS 枪管或 SVT-40 625mm 枪管；
    - 在 SKS / OP-SKS 照门固定环或 SVDS 照门固定环的照门槽安装 TKPD 导轨防尘盖；在 SVT-40 625mm 枪管的照门槽安装 5 种 SKS 导气管防尘盖（OP-SKS 标准、SKS 木制标准、TAPCO、Fab Defence UAS、ATI Monte Carlo）；在 SVDS 照门固定环的照门槽安装 OP-SKS 标准 / SKS 木制标准 / ATI Monte Carlo 3 种导气管防尘盖或 UltiMAK M1-B AK 导气管套件；
    - 在 SVDS 照门固定环的护木槽安装照门固定环自身；
+   - 在 Alpha Dog Alpha 9 9x19 声音抑制器的 `mod_scope` 槽安装 M14 DCSB 瞄具基座；
    - 在 RPD 520mm 枪管的枪口装置槽安装 AKM PBS-1 7.62x39 消音器；
    - 在 730mm 标准莫辛枪管或 SVT-40 标准枪口装置的前准星槽安装 MDR BLK LBL ALX 脚架（16 或 20 型号）；
    - 在 AA-12 457mm 枪管的导轨槽安装 M60 脚架；
    - 在 Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）或 UltiMAK M1-B AK 导气管套件的战术配件槽（`mod_tactical_000`）安装 MDR BLK LBL ALX 20 脚架；
    - 在 MP-18 或 Marlin MXLR 的枪托槽安装 KS-23 金属枪托；
+   - 清客户端缓存后，给 20x1mm 玩具枪的原装弹匣压入 7.62x25 托卡列夫子弹（全部 7 种任选），插枪并尝试开火，确认能否正常发射；同时确认原 20x1mm 玩具弹仍可使用；
    - 尝试同时安装 PPSh-41 防尘盖与 HUXWRX HX-QD 消音器，确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与任一非 KS-23 枪托（含 Zveno 缓冲管转接器），确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与 71 发弹鼓，确认二者互斥；
@@ -75,7 +77,7 @@ followed by the individual injections:
 [Info][...] WeaponCrossModding: added '<item id>' to slot '<slot name>' (<owner item name>)
 ```
 
-The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `mod_barrel`, `mod_stock`, `mod_tactical`, `mod_tactical_000`, `mod_tactical_001`, `mod_pistol_grip`, `mod_mount`, `mod_muzzle`, `mod_reciever`; conflicts also print `added conflicting item '…' to '…'`.
+The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `mod_barrel`, `mod_stock`, `mod_tactical`, `mod_tactical_000`, `mod_tactical_001`, `mod_pistol_grip`, `mod_mount`, `mod_muzzle`, `mod_reciever`; ammo injections use the two slot names `patron_in_weapon` (weapon chamber) and `cartridges` (magazine cartridge slot); conflicts also print `added conflicting item '…' to '…'`.
 
 ## Verification Steps
 
@@ -89,11 +91,13 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - mount a Mosin 200 mm, M700, ORSIS T-5000M, SVDS or SVT-40 625 mm barrel in the SVDS rear sight block's handguard slot;
    - mount the TKPD railed dust cover on the sight slot of the SKS / OP-SKS rear sight blocks or the SVDS rear sight block; the 5 SKS gas-tube covers (OP-SKS standard, SKS wooden standard, TAPCO, Fab Defence UAS, ATI Monte Carlo) on the SVT-40 625 mm barrel's sight slot; and the OP-SKS standard / SKS wooden standard / ATI Monte Carlo covers or the UltiMAK M1-B AK gas tube kit on the SVDS rear sight block's sight slot;
    - mount the SVDS rear sight block itself in its own handguard slot;
+   - mount the M14 DCSB scope mount on the Alpha Dog Alpha 9 9x19 sound suppressor's `mod_scope` slot;
    - mount an AKM PBS-1 7.62x39 suppressor on the muzzle device slot of the RPD 520 mm barrel;
    - mount an MDR BLK LBL ALX bipod (16 or 20 model) on the front sight slot of the 730 mm standard Mosin barrel or the SVT-40 standard muzzle;
    - mount an M60 bipod on the rail slot of the AA-12 457 mm barrel;
    - mount an MDR BLK LBL ALX 20 bipod on the lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit or the tactical slot (`mod_tactical_000`) of the UltiMAK M1-B AK gas tube kit;
    - mount a KS-23 metal stock on the stock slot of the MP-18 or Marlin MXLR;
+   - after clearing the client cache, load 7.62x25 Tokarev rounds (any of the 7 types) into the stock magazine of the 20x1mm toy gun, insert it and try to fire, confirming whether it fires; also confirm the original 20x1mm toy rounds still work;
    - try mounting the PPSh-41 dust cover and a HUXWRX HX-QD suppressor together and confirm they are mutually exclusive;
    - try mounting an SKS chassis kit on the PPSh-41 together with any non-KS-23 stock (including the Zveno buffer tube adapter) and confirm they are mutually exclusive;
    - try mounting an SKS chassis kit on the PPSh-41 together with the 71-round drum magazine and confirm they are mutually exclusive;
