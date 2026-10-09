@@ -154,6 +154,7 @@ public class WeaponCrossModdingPluginTests
     private const string Mp18StockExistingAId = "61f803b8ced75b2e852e35f8";
     private const string Mp18StockExistingBId = "61f7b234ea4ab34f2f59c3ec";
     private const string MarlinMxlrId = "67c6de3ce39861860909e8e5";
+    private const string MxlrMagId = "67c5424826265106dd0697a4";
     private const string Ks23MetalStockId = "5e848dc4e4dbc5266a4ec63d";
 
     // 20x1mm 玩具枪、其原装弹匣与玩具弹，以及 7.62x25 托卡列夫全部 7 种弹药。
@@ -1045,8 +1046,9 @@ public class WeaponCrossModdingPluginTests
     }
 
     [Fact]
-    public async Task AddsCaliber762x25ToToyGunMagazineCartridgesKeeping20x1mm()
+    public async Task ToyGunMagazineStillOnlyAccepts20x1mm()
     {
+        // 玩具枪原装弹匣恢复原样：不再支持 7.62x25，改由 MXLR 弹仓链路供弹。
         var mag = ItemWithAmmoContainer("mag_pd_ussr_toygun_std_20x1mm_18", isChamber: false, ToyAmmoId);
         var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(ToyGunMagId)] = mag };
 
@@ -1056,9 +1058,9 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(ToyAmmoId), filter);
         foreach (string id in Caliber762x25AmmoIds)
         {
-            Assert.Contains(new MongoId(id), filter);
+            Assert.DoesNotContain(new MongoId(id), filter);
         }
-        Assert.Equal(1 + Caliber762x25AmmoIds.Length, filter.Count);
+        Assert.Single(filter);
     }
 
     [Fact]
@@ -1077,7 +1079,7 @@ public class WeaponCrossModdingPluginTests
         await plugin.OnLoadAsync(CancellationToken.None);
 
         Assert.Equal(1 + Caliber762x25AmmoIds.Length, AmmoFilterOf(gun, isChamber: true).Count);
-        Assert.Equal(1 + Caliber762x25AmmoIds.Length, AmmoFilterOf(mag, isChamber: false).Count);
+        Assert.Single(AmmoFilterOf(mag, isChamber: false));
     }
 
     [Fact]
@@ -1091,6 +1093,37 @@ public class WeaponCrossModdingPluginTests
         var filter = FilterOf(alphaDog, "mod_scope");
         Assert.Contains(new MongoId("58d39d3d86f77445bb794ae7"), filter);
         Assert.Contains(new MongoId(M14DcsbMountId), filter);
+        Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
+    public async Task Adds762x25ToMarlinMxlrMagazine()
+    {
+        var mag = ItemWithAmmoContainer("mag_m1895_marlin_mxlr_784x49_5", isChamber: false, "67c540c3d0538d12ec036c08");
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(MxlrMagId)] = mag };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = AmmoFilterOf(mag, isChamber: false);
+        Assert.Contains(new MongoId("67c540c3d0538d12ec036c08"), filter);
+        foreach (string id in Caliber762x25AmmoIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsMarlinMxlrMagazineToToyGunMagazineSlot()
+    {
+        var gun = ItemWithSlot("weapon_ussr_pd_20x1mm", "mod_magazine", ToyGunMagId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(ToyGunId)] = gun };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(gun, "mod_magazine");
+        Assert.Contains(new MongoId(ToyGunMagId), filter);
+        Assert.Contains(new MongoId(MxlrMagId), filter);
         Assert.Equal(2, filter.Count);
     }
 

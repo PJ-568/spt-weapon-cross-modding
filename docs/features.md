@@ -25,7 +25,9 @@
 
 ## 弹药与口径
 
-- 20x1mm 玩具枪（`weapon_ussr_pd_20x1mm`）与其原装弹匣（`mag_pd_ussr_toygun_std_20x1mm_18`）：在保留原 20x1mm 玩具弹能力的同时，新增对全部 7 种 7.62x25 托卡列夫弹药（AKBS、FMJ43、LRN、LRNPC、P Gl、Pst gzh、T Gzh）的兼容。做法是向武器膛室（`Chambers`）与弹匣装填位（`Cartridges`）白名单追加弹药 id，不改动武器单值 `ammoCaliber`。
+- 20x1mm 玩具枪（`weapon_ussr_pd_20x1mm`）的膛室（`Chambers`）：在保留原 20x1mm 玩具弹能力的同时，新增对全部 7 种 7.62x25 托卡列夫弹药（AKBS、FMJ43、LRN、LRNPC、P Gl、Pst gzh、T Gzh）的兼容。做法是向武器膛室（`Chambers`）白名单追加弹药 id，不改动武器单值 `ammoCaliber`；其原装弹匣不再直接支持 7.62x25。
+- Marlin MXLR .308 ME 杠杆步枪的 5 发管状弹仓（`mag_m1895_marlin_mxlr_784x49_5`）：新增对全部 7 种 7.62x25 托卡列夫弹药的兼容。
+- 20x1mm 玩具枪（`weapon_ussr_pd_20x1mm`）的 `mod_magazine` 槽：新增 Marlin MXLR 的 5 发管状弹仓（`mag_m1895_marlin_mxlr_784x49_5`）。
 
 ## 握把与配件
 
@@ -84,7 +86,9 @@
 
 ## Ammunition and caliber
 
-- 20x1mm toy gun (`weapon_ussr_pd_20x1mm`) and its stock magazine (`mag_pd_ussr_toygun_std_20x1mm_18`): while keeping the original 20x1mm toy-round capability, adds compatibility with all 7 types of 7.62x25 Tokarev ammunition (AKBS, FMJ43, LRN, LRNPC, P Gl, Pst gzh, T Gzh). It appends the ammo ids to the weapon's chamber (`Chambers`) and the magazine's cartridge (`Cartridges`) whitelists without touching the weapon's single-value `ammoCaliber`.
+- Chamber (`Chambers`) of the 20x1mm toy gun (`weapon_ussr_pd_20x1mm`): while keeping the original 20x1mm toy-round capability, adds compatibility with all 7 types of 7.62x25 Tokarev ammunition (AKBS, FMJ43, LRN, LRNPC, P Gl, Pst gzh, T Gzh). It appends the ammo ids to the chamber whitelist without touching the weapon's single-value `ammoCaliber`; its stock magazine no longer accepts 7.62x25 directly.
+- 5-round tubular magazine of the Marlin MXLR .308 ME lever-action rifle (`mag_m1895_marlin_mxlr_784x49_5`): adds compatibility with all 7 types of 7.62x25 Tokarev ammunition.
+- `mod_magazine` slot of the 20x1mm toy gun (`weapon_ussr_pd_20x1mm`): adds the Marlin MXLR 5-round tubular magazine.
 
 ## Grips and accessories
 

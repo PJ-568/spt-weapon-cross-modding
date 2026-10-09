@@ -14,7 +14,7 @@
 [Info][...] WeaponCrossModding: added '<物品 id>' to slot '<槽位名>' (<宿主物品名>)
 ```
 
-槽位名应涵盖 `mod_scope`、`mod_sight_front`、`mod_sight_rear`、`mod_barrel`、`mod_stock`、`mod_tactical`、`mod_tactical_000`、`mod_tactical_001`、`mod_pistol_grip`、`mod_mount`、`mod_muzzle`、`mod_reciever`；弹药注入使用 `patron_in_weapon`（武器膛室）与 `cartridges`（弹匣装填位）两个槽名；互斥关系另会输出 `added conflicting item '…' to '…'`。
+槽位名应涵盖 `mod_scope`、`mod_sight_front`、`mod_sight_rear`、`mod_barrel`、`mod_stock`、`mod_tactical`、`mod_tactical_000`、`mod_tactical_001`、`mod_pistol_grip`、`mod_mount`、`mod_muzzle`、`mod_reciever`、`mod_magazine`；弹药注入使用 `patron_in_weapon`（武器膛室）与 `cartridges`（弹匣装填位）两个槽名；互斥关系另会输出 `added conflicting item '…' to '…'`。
 
 ## 验证步骤
 
@@ -34,7 +34,7 @@
    - 在 AA-12 457mm 枪管的导轨槽安装 M60 脚架；
    - 在 Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）或 UltiMAK M1-B AK 导气管套件的战术配件槽（`mod_tactical_000`）安装 MDR BLK LBL ALX 20 脚架；
    - 在 MP-18 或 Marlin MXLR 的枪托槽安装 KS-23 金属枪托；
-   - 清客户端缓存后，给 20x1mm 玩具枪的原装弹匣压入 7.62x25 托卡列夫子弹（全部 7 种任选），插枪并尝试开火，确认能否正常发射；同时确认原 20x1mm 玩具弹仍可使用；
+   - 清客户端缓存后，验证 7.62x25 供弹链路：给 Marlin MXLR 的 5 发管状弹仓压入 7.62x25 托卡列夫子弹，插入玩具枪的 `mod_magazine` 槽，尝试开火；同时确认玩具枪原装 20x1mm 玩具弹仍可使用；
    - 尝试同时安装 PPSh-41 防尘盖与 HUXWRX HX-QD 消音器，确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与任一非 KS-23 枪托（含 Zveno 缓冲管转接器），确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与 71 发弹鼓，确认二者互斥；
@@ -77,7 +77,7 @@ followed by the individual injections:
 [Info][...] WeaponCrossModding: added '<item id>' to slot '<slot name>' (<owner item name>)
 ```
 
-The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `mod_barrel`, `mod_stock`, `mod_tactical`, `mod_tactical_000`, `mod_tactical_001`, `mod_pistol_grip`, `mod_mount`, `mod_muzzle`, `mod_reciever`; ammo injections use the two slot names `patron_in_weapon` (weapon chamber) and `cartridges` (magazine cartridge slot); conflicts also print `added conflicting item '…' to '…'`.
+The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `mod_barrel`, `mod_stock`, `mod_tactical`, `mod_tactical_000`, `mod_tactical_001`, `mod_pistol_grip`, `mod_mount`, `mod_muzzle`, `mod_reciever`, `mod_magazine`; ammo injections use the two slot names `patron_in_weapon` (weapon chamber) and `cartridges` (magazine cartridge slot); conflicts also print `added conflicting item '…' to '…'`.
 
 ## Verification Steps
 
@@ -97,7 +97,7 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - mount an M60 bipod on the rail slot of the AA-12 457 mm barrel;
    - mount an MDR BLK LBL ALX 20 bipod on the lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit or the tactical slot (`mod_tactical_000`) of the UltiMAK M1-B AK gas tube kit;
    - mount a KS-23 metal stock on the stock slot of the MP-18 or Marlin MXLR;
-   - after clearing the client cache, load 7.62x25 Tokarev rounds (any of the 7 types) into the stock magazine of the 20x1mm toy gun, insert it and try to fire, confirming whether it fires; also confirm the original 20x1mm toy rounds still work;
+   - after clearing the client cache, load 7.62x25 Tokarev rounds into the Marlin MXLR's 5-round tubular magazine, insert it into the toy gun's `mod_magazine` slot and try to fire; also confirm the original 20x1mm toy rounds still work;
    - try mounting the PPSh-41 dust cover and a HUXWRX HX-QD suppressor together and confirm they are mutually exclusive;
    - try mounting an SKS chassis kit on the PPSh-41 together with any non-KS-23 stock (including the Zveno buffer tube adapter) and confirm they are mutually exclusive;
    - try mounting an SKS chassis kit on the PPSh-41 together with the 71-round drum magazine and confirm they are mutually exclusive;

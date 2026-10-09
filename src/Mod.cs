@@ -66,9 +66,11 @@ namespace Pj568.WeaponCrossModding;
 ///  45. 让 SVDS 照门固定环的照门槽支持安装 OP-SKS 标准 / SKS 木制标准 / ATI Monte Carlo 3 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件；
 ///  46. 让 5 种 SKS 导气管防尘盖与 UltiMAK M1-B AK 导气管套件彼此之间（含与自身）互不兼容，使一把武器上最多只能装一个；
 ///  47. 让 UltiMAK M1-B AK 导气管套件的战术配件槽（mod_tactical_000）支持安装 MDR BLK LBL ALX 20 脚架。
-///  48. 让 20x1mm 玩具枪与其原装弹匣在保留 20x1mm 能力的同时支持全部 7 种 7.62x25 托卡列夫弹药
-///      （只补膛室与弹匣装填位白名单，不动武器单值 ammoCaliber）。
-///  49. 让 Alpha Dog Alpha 9 9x19 声音抑制器的 mod_scope 槽支持安装 M14 SAGE International DCSB 瞄具基座。
+///  48. 让 20x1mm 玩具枪的膛室在保留 20x1mm 能力的同时支持全部 7 种 7.62x25 托卡列夫弹药
+///      （只补膛室白名单，不动武器单值 ammoCaliber；其原装弹匣不直接支持，改由 MXLR 弹仓链路供弹）。
+///  49. 让 Marlin MXLR .308 ME 杠杆步枪的 5 发管状弹仓支持全部 7 种 7.62x25 托卡列夫弹药。
+///  50. 让 20x1mm 玩具枪的 mod_magazine 槽支持安装 Marlin MXLR 的 5 发管状弹仓。
+///  51. 让 Alpha Dog Alpha 9 9x19 声音抑制器的 mod_scope 槽支持安装 M14 SAGE International DCSB 瞄具基座。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -299,12 +301,17 @@ public class WeaponCrossModdingPlugin(
     // PPSh-41 7.62x25 71 发弹鼓。
     private const string Ppsh71DrumMagId = "5ea034f65aad6446a939737e";
 
-    // 20x1mm 玩具枪（weapon_ussr_pd_20x1mm）与其原装弹匣（mag_pd_ussr_toygun_std_20x1mm_18）。
-    // 实验性最小改法：只往膛室与弹匣装填位白名单追加 7.62x25，不动单值 ammoCaliber，故保留原 20x1mm 能力。
+    // 20x1mm 玩具枪（weapon_ussr_pd_20x1mm）：其膛室兼容 7.62x25，弹匣槽用于搭载 MXLR 弹仓。
     private const string ToyGunId = "66015072e9f84d5680039678";
-    private const string ToyGunMagId = "66015dc4aaad2f54cb04c56a";
     private const string ToyGunLabel = "20x1mm toy gun";
-    private const string ToyGunMagLabel = "20x1mm toy gun magazine";
+
+    // Marlin MXLR .308 ME 杠杆步枪的 5 发管状弹仓（由 WTT-ContentBackport 注入）。
+    // 让 MXLR 弹仓兼容 7.62x25；玩具枪弹匣槽兼容 MXLR 弹仓。
+    private const string MxlrMagId = "67c5424826265106dd0697a4";
+    private const string MxlrMagLabel = "Marlin MXLR 5-round magazine";
+
+    // 弹匣槽名（玩具枪等宿主共用）。
+    private const string MagazineSlotName = "mod_magazine";
 
     // 7.62x25 托卡列夫弹药（Caliber762x25TT）全部 7 种。
     private static readonly (string Id, string Label)[] Caliber762x25Ammo =
@@ -560,10 +567,14 @@ public class WeaponCrossModdingPlugin(
             AddItemIdsToSlot(items, Mp18RifleId, Mp18RifleLabel, StockSlotName, Ks23MetalStockId);
             AddItemIdsToSlot(items, MarlinMxlrId, MarlinMxlrLabel, StockSlotName, Ks23MetalStockId);
 
-            // 20x1mm 玩具枪与其原装弹匣：在原有 20x1mm 能力之上，追加 7.62x25 托卡列夫全部 7 种弹药。
-            // 只补 Chambers / Cartridges 白名单，不改 ammoCaliber；能否实际开火由实机验证判定。
+            // 20x1mm 玩具枪的膛室：保留 7.62x25 托卡列夫全部 7 种弹药兼容（不动 ammoCaliber；其原装弹匣不直接支持，改由 MXLR 弹仓供弹）。
             AddAmmoIdsToContainer(items, ToyGunId, ToyGunLabel, isChamber: true, [.. Caliber762x25Ammo.Select(x => x.Id)]);
-            AddAmmoIdsToContainer(items, ToyGunMagId, ToyGunMagLabel, isChamber: false, [.. Caliber762x25Ammo.Select(x => x.Id)]);
+
+            // Marlin MXLR 5 发管状弹仓的装填位：追加 7.62x25 托卡列夫全部 7 种弹药。
+            AddAmmoIdsToContainer(items, MxlrMagId, MxlrMagLabel, isChamber: false, [.. Caliber762x25Ammo.Select(x => x.Id)]);
+
+            // 20x1mm 玩具枪的 mod_magazine 槽：追加 Marlin MXLR 5 发管状弹仓。
+            AddItemIdsToSlot(items, ToyGunId, ToyGunLabel, MagazineSlotName, MxlrMagId);
         }
         catch (Exception ex)
         {
