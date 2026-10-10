@@ -154,6 +154,7 @@ public class WeaponCrossModdingPluginTests
     private const string Mp18StockExistingAId = "61f803b8ced75b2e852e35f8";
     private const string Mp18StockExistingBId = "61f7b234ea4ab34f2f59c3ec";
     private const string MarlinMxlrId = "67c6de3ce39861860909e8e5";
+    private const string EmtiId = "5dfe14f30b92095fd441edaf";
     private const string MxlrMagId = "67c5424826265106dd0697a4";
     private const string Ks23MetalStockId = "5e848dc4e4dbc5266a4ec63d";
 
@@ -1125,6 +1126,18 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(ToyGunMagId), filter);
         Assert.Contains(new MongoId(MxlrMagId), filter);
         Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsM14DcsbMountToEmtiScopeSlot()
+    {
+        var emti = ItemWithSlot("mount_7mm_etmi_019", "mod_scope", EmtiId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(EmtiId)] = emti };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(emti, "mod_scope");
+        Assert.Contains(new MongoId("5addbffe5acfc4001714dfac"), filter);
     }
 
     [Fact]

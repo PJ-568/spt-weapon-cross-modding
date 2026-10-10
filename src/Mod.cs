@@ -71,6 +71,7 @@ namespace Pj568.WeaponCrossModding;
 ///  49. 让 Marlin MXLR .308 ME 杠杆步枪的 5 发管状弹仓支持全部 7 种 7.62x25 托卡列夫弹药。
 ///  50. 让 20x1mm 玩具枪的 mod_magazine 槽支持安装 Marlin MXLR 的 5 发管状弹仓。
 ///  51. 让 Alpha Dog Alpha 9 9x19 声音抑制器的 mod_scope 槽支持安装 M14 SAGE International DCSB 瞄具基座。
+///  52. 让 EMTI-019 基座的 mod_scope 槽支持安装 DCSB 瞄具基座。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -325,6 +326,10 @@ public class WeaponCrossModdingPlugin(
         ("573603c924597764442bd9cb", "T Gzh"),
     ];
 
+    // EMTI-019 基座（游戏本体自带，非 Mod 物品）：其瞄具槽支持 DCSB 瞄具基座。
+    private const string EmtiId = "5dfe14f30b92095fd441edaf";
+    private const string EmtiLabel = "EMTI-019 mount";
+
     // SKS / OP-SKS 照门固定环（mod_sight_rear 照门槽宿主）与 TKPD 导轨防尘盖（由 WTT 注入）。
     private const string SksRearSightBlockId = "634f04d82e5def262d0b30c6";
     private const string OpsksRearSightBlockId = "634f05a21f9f536910079b56";
@@ -575,6 +580,9 @@ public class WeaponCrossModdingPlugin(
 
             // 20x1mm 玩具枪的 mod_magazine 槽：追加 Marlin MXLR 5 发管状弹仓。
             AddItemIdsToSlot(items, ToyGunId, ToyGunLabel, MagazineSlotName, MxlrMagId);
+
+            // EMTI-019 基座的 mod_scope 槽：追加 DCSB 瞄具基座。
+            AddItemIdsToSlot(items, EmtiId, EmtiLabel, ScopeSlotName, M14DcsbMountId);
         }
         catch (Exception ex)
         {
