@@ -72,6 +72,9 @@ namespace Pj568.WeaponCrossModding;
 ///  50. 让 20x1mm 玩具枪的 mod_magazine 槽支持安装 Marlin MXLR 的 5 发管状弹仓。
 ///  51. 让 Alpha Dog Alpha 9 9x19 声音抑制器的 mod_scope 槽支持安装 M14 SAGE International DCSB 瞄具基座。
 ///  52. 让 EMTI-019 基座的 mod_scope 槽支持安装 DCSB 瞄具基座。
+///  53. 让 MTs-255-12 12 号左轮霰弹枪的护木槽（mod_handguard）支持安装 MP-18 的全部护木（木制 / 塑料），
+///      枪托槽（mod_stock）支持安装雷明顿 Model 870 的 Magpul SGA、Remington SPS 与 Shockwave Raptor 枪托
+///      （不含 Mesa Tactical LEO 转接器与 Fab Defence AGR 握把）。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -258,8 +261,22 @@ public class WeaponCrossModdingPlugin(
     // AA-12 457mm 枪管（mod_mount 导轨槽宿主）。
     private const string Aa12Barrel457Id = "670fced86a7e274b1a0964e8";
 
-    // MP-18 7.62x54R 单发步枪。
+    // MTs-255-12 12 号左轮霰弹枪（weapon_ckib_mc_255_12g）—— 护木槽与枪托槽宿主。
+    private const string Mts255Id = "60db29ce99594040e04c4a27";
+
+    // MP-18 7.62x54R 单发步枪及其全部护木（木制 / 塑料）。
     private const string Mp18RifleId = "61f7c9e189e6fb1a5e3ea78d";
+    private const string Mp18HandguardWoodId = "61f7b85367ddd414173fdb36";
+    private const string Mp18HandguardPlasticId = "61f8024263dc1250e26eb029";
+
+    // 雷明顿 Model 870 12 号霰弹枪（5a7828548dc32e5a9c28b516）mod_stock 枪托槽支持的枪托
+    //（已去掉 Mesa Tactical LEO 转接器与 Fab Defence AGR 握把）。
+    private static readonly string[] M870StockIds =
+    [
+        "5a78813bc5856700186c4abe", // Magpul SGA
+        "5a7880d0c5856700142fdd9d", // Remington SPS
+        "5a788169c5856700142fdd9e", // Shockwave Technologies Raptor grip
+    ];
 
     // Marlin MXLR .308 ME 杠杆步枪（由 WTT-ContentBackport 注入）。
     private const string MarlinMxlrId = "67c6de3ce39861860909e8e5";
@@ -438,6 +455,7 @@ public class WeaponCrossModdingPlugin(
     private const string MosinBarrel730Label = "Mosin 730mm barrel";
     private const string Aa12Barrel457Label = "AA-12 457mm barrel";
     private const string Mp18RifleLabel = "MP-18 rifle";
+    private const string Mts255Label = "MTs-255-12";
     private const string MarlinMxlrLabel = "Marlin MXLR";
     private const string SksRearSightBlockLabel = "SKS rear sight block";
     private const string OpsksRearSightBlockLabel = "OP-SKS rear sight block";
@@ -571,6 +589,11 @@ public class WeaponCrossModdingPlugin(
             // MP-18 与 Marlin MXLR 的 mod_stock 枪托槽：追加 KS-23 金属枪托。
             AddItemIdsToSlot(items, Mp18RifleId, Mp18RifleLabel, StockSlotName, Ks23MetalStockId);
             AddItemIdsToSlot(items, MarlinMxlrId, MarlinMxlrLabel, StockSlotName, Ks23MetalStockId);
+
+            // MTs-255-12 的 mod_handguard 护木槽：追加 MP-18 的全部护木；
+            // mod_stock 枪托槽：追加雷明顿 Model 870 支持的全部枪托。
+            AddItemIdsToSlot(items, Mts255Id, Mts255Label, HandguardSlotName, Mp18HandguardWoodId, Mp18HandguardPlasticId);
+            AddItemIdsToSlot(items, Mts255Id, Mts255Label, StockSlotName, M870StockIds);
 
             // 20x1mm 玩具枪的膛室：保留 7.62x25 托卡列夫全部 7 种弹药兼容（不动 ammoCaliber；其原装弹匣不直接支持，改由 MXLR 弹仓供弹）。
             AddAmmoIdsToContainer(items, ToyGunId, ToyGunLabel, isChamber: true, [.. Caliber762x25Ammo.Select(x => x.Id)]);

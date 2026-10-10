@@ -22,6 +22,7 @@
 - RPD 520mm 枪管的 `mod_muzzle` 枪口装置槽：新增 AKM PBS-1 7.62x39 消音器。
 - AA-12 457mm 枪管的 `mod_mount` 导轨槽：新增 M60 脚架。
 - MP-18 与 Marlin MXLR 的 `mod_stock` 枪托槽：新增 KS-23 金属枪托。
+- MTs-255-12 12 号左轮霰弹枪的 `mod_handguard` 护木槽：新增 MP-18 的全部护木（木制、塑料）；其 `mod_stock` 枪托槽：新增雷明顿 Model 870 的 Magpul SGA、Remington SPS 与 Shockwave Raptor 枪托（不含 Mesa Tactical LEO 转接器与 Fab Defence AGR 握把）。
 
 ## 弹药与口径
 
@@ -83,6 +84,7 @@
 - `mod_muzzle` muzzle device slot of the RPD 520 mm barrel: adds the AKM PBS-1 7.62x39 suppressor.
 - `mod_mount` rail slot of the AA-12 457 mm barrel: adds the M60 bipod.
 - `mod_stock` slot of the MP-18 and Marlin MXLR: adds the KS-23 metal stock.
+- `mod_handguard` slot of the MTs-255-12 12ga revolver shotgun: adds all MP-18 handguards (wooden, plastic); its `mod_stock` slot: adds the Remington Model 870's Magpul SGA, Remington SPS and Shockwave Raptor stocks (excluding the Mesa Tactical LEO stock adapter and the Fab Defence AGR pistol grip).
 
 ## Ammunition and caliber
 

@@ -34,6 +34,7 @@
    - 在 AA-12 457mm 枪管的导轨槽安装 M60 脚架；
    - 在 Fab Defence UAS SKS 枪身套件的下导轨（`mod_tactical_002`）或 UltiMAK M1-B AK 导气管套件的战术配件槽（`mod_tactical_000`）安装 MDR BLK LBL ALX 20 脚架；
    - 在 MP-18 或 Marlin MXLR 的枪托槽安装 KS-23 金属枪托；
+   - 在 MTs-255-12 的护木槽（`mod_handguard`）安装 MP-18 的护木（木制 / 塑料），在其枪托槽（`mod_stock`）安装雷明顿 Model 870 的任一枪托（如 Magpul SGA、Remington SPS），确认均可安装；
    - 清客户端缓存后，验证 7.62x25 供弹链路：给 Marlin MXLR 的 5 发管状弹仓压入 7.62x25 托卡列夫子弹，插入玩具枪的 `mod_magazine` 槽，尝试开火；同时确认玩具枪原装 20x1mm 玩具弹仍可使用；
    - 尝试同时安装 PPSh-41 防尘盖与 HUXWRX HX-QD 消音器，确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与任一非 KS-23 枪托（含 Zveno 缓冲管转接器），确认二者互斥；
@@ -97,6 +98,7 @@ The slot names should cover `mod_scope`, `mod_sight_front`, `mod_sight_rear`, `m
    - mount an M60 bipod on the rail slot of the AA-12 457 mm barrel;
    - mount an MDR BLK LBL ALX 20 bipod on the lower rail (`mod_tactical_002`) of the Fab Defence UAS SKS chassis kit or the tactical slot (`mod_tactical_000`) of the UltiMAK M1-B AK gas tube kit;
    - mount a KS-23 metal stock on the stock slot of the MP-18 or Marlin MXLR;
+   - mount an MP-18 handguard (wooden / plastic) on the MTs-255-12's `mod_handguard` slot and a Remington Model 870 stock (e.g. Magpul SGA or Remington SPS) on its `mod_stock` slot, and confirm both can be installed;
    - after clearing the client cache, load 7.62x25 Tokarev rounds into the Marlin MXLR's 5-round tubular magazine, insert it into the toy gun's `mod_magazine` slot and try to fire; also confirm the original 20x1mm toy rounds still work;
    - try mounting the PPSh-41 dust cover and a HUXWRX HX-QD suppressor together and confirm they are mutually exclusive;
    - try mounting an SKS chassis kit on the PPSh-41 together with any non-KS-23 stock (including the Zveno buffer tube adapter) and confirm they are mutually exclusive;

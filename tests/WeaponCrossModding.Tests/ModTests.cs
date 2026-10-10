@@ -153,6 +153,19 @@ public class WeaponCrossModdingPluginTests
     private const string Mp18RifleId = "61f7c9e189e6fb1a5e3ea78d";
     private const string Mp18StockExistingAId = "61f803b8ced75b2e852e35f8";
     private const string Mp18StockExistingBId = "61f7b234ea4ab34f2f59c3ec";
+
+    // MTs-255-12（护木槽与枪托槽宿主）及其原装护木 / 枪托；MP-18 全部护木；雷明顿 Model 870 全部枪托。
+    private const string Mts255Id = "60db29ce99594040e04c4a27";
+    private const string Mts255HandguardExistingId = "6123649463849f3d843da7c4";
+    private const string Mts255StockExistingId = "612781056f3d944a17348d60";
+    private const string Mp18HandguardWoodId = "61f7b85367ddd414173fdb36";
+    private const string Mp18HandguardPlasticId = "61f8024263dc1250e26eb029";
+    private static readonly string[] M870StockIds =
+    [
+        "5a78813bc5856700186c4abe", // Magpul SGA
+        "5a7880d0c5856700142fdd9d", // Remington SPS
+        "5a788169c5856700142fdd9e", // Shockwave Technologies Raptor grip
+    ];
     private const string MarlinMxlrId = "67c6de3ce39861860909e8e5";
     private const string EmtiId = "5dfe14f30b92095fd441edaf";
     private const string MxlrMagId = "67c5424826265106dd0697a4";
@@ -1138,6 +1151,39 @@ public class WeaponCrossModdingPluginTests
 
         var filter = FilterOf(emti, "mod_scope");
         Assert.Contains(new MongoId("5addbffe5acfc4001714dfac"), filter);
+    }
+
+    [Fact]
+    public async Task AddsAllMp18HandguardsToMts255HandguardSlot()
+    {
+        var gun = ItemWithSlot("weapon_ckib_mc_255_12g", "mod_handguard", Mts255HandguardExistingId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Mts255Id)] = gun };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(gun, "mod_handguard");
+        Assert.Contains(new MongoId(Mts255HandguardExistingId), filter);
+        Assert.Contains(new MongoId(Mp18HandguardWoodId), filter);
+        Assert.Contains(new MongoId(Mp18HandguardPlasticId), filter);
+        Assert.Equal(3, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsAllM870StocksToMts255StockSlot()
+    {
+        var gun = ItemWithSlot("weapon_ckib_mc_255_12g", "mod_stock", Mts255StockExistingId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Mts255Id)] = gun };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(gun, "mod_stock");
+        Assert.Contains(new MongoId(Mts255StockExistingId), filter);
+        foreach (string id in M870StockIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+
+        Assert.Equal(1 + M870StockIds.Length, filter.Count);
     }
 
     [Fact]
