@@ -75,6 +75,8 @@ namespace Pj568.WeaponCrossModding;
 ///  53. 让 MTs-255-12 12 号左轮霰弹枪的护木槽（mod_handguard）支持安装 MP-18 的全部护木（木制 / 塑料），
 ///      枪托槽（mod_stock）支持安装雷明顿 Model 870 的 Magpul SGA、Remington SPS 与 Shockwave Raptor 枪托
 ///      （不含 Mesa Tactical LEO 转接器与 Fab Defence AGR 握把）。
+///  54. 让 116mm 7.62x25 TT 自制螺纹枪管的枪口槽（mod_muzzle）支持安装 Alpha Dog Alpha 9 9x19 声音抑制器。
+///  55. 让 AA-12 Gen2 的瞄具槽（mod_scope）支持安装 La Rue Tactical QD LT-101 皮卡汀尼立管导轨基座。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -161,6 +163,10 @@ public class WeaponCrossModdingPlugin(
     private const string AimSportsTriRailTacticalSlotName = "mod_tactical_000";
     private const string AimSportsTriRailSecondTacticalSlotName = "mod_tactical_001";
     private const string AimSportsTriRailLabel = "Aim Sports tri-rail";
+
+    // La Rue Tactical QD LT-101 皮卡汀尼立管导轨基座（mod_scope 瞄具槽宿主，自身可装瞄具）。
+    private const string LaRueLt101Id = "5c064c400db834001d23f468";
+    private const string LaRueLt101Label = "La Rue Tactical QD LT-101";
 
     // Fab Defence UAS SKS 枪身套件的下导轨（原本兼容脚架的第三个战术槽）。
     private const string FabDefenceUasLowerRailSlotName = "mod_tactical_002";
@@ -261,6 +267,9 @@ public class WeaponCrossModdingPlugin(
     // AA-12 457mm 枪管（mod_mount 导轨槽宿主）。
     private const string Aa12Barrel457Id = "670fced86a7e274b1a0964e8";
 
+    // AA-12 Gen2 (MPS Auto Assault-12 Gen2) 自动霰弹枪（mod_scope 瞄具槽宿主）。
+    private const string Aa12Gen2Id = "67124dcfa3541f2a1f0e788b";
+
     // MTs-255-12 12 号左轮霰弹枪（weapon_ckib_mc_255_12g）—— 护木槽与枪托槽宿主。
     private const string Mts255Id = "60db29ce99594040e04c4a27";
 
@@ -287,6 +296,10 @@ public class WeaponCrossModdingPlugin(
     // RPD 520mm 枪管（mod_muzzle 枪口槽宿主）与 AKM PBS-1 消音器。
     private const string RpdBarrel520Id = "6513eff1e06849f06c0957d4";
     private const string AkmPbs1Id = "5a0d63621526d8dba31fe3bf";
+
+    // 116mm 7.62x25 TT 自制螺纹枪管（mod_muzzle 枪口槽宿主）。
+    private const string TtBarrel116ThreadedId = "571a279b24597720b4066566";
+    private const string TtBarrel116ThreadedLabel = "116mm TT 7.62x25 threaded barrel";
 
     // M700 枪管（4 种）与 ORSIS T-5000M 枪管（可安装于 PPSh-41 枪管槽）。
     private const string M700Barrel660Id = "5bfebc250db834001a6694e1"; // 26 英寸
@@ -454,6 +467,7 @@ public class WeaponCrossModdingPlugin(
     private const string RpdBarrel520Label = "RPD 520mm barrel";
     private const string MosinBarrel730Label = "Mosin 730mm barrel";
     private const string Aa12Barrel457Label = "AA-12 457mm barrel";
+    private const string Aa12Gen2Label = "AA-12 Gen2";
     private const string Mp18RifleLabel = "MP-18 rifle";
     private const string Mts255Label = "MTs-255-12";
     private const string MarlinMxlrLabel = "Marlin MXLR";
@@ -606,6 +620,12 @@ public class WeaponCrossModdingPlugin(
 
             // EMTI-019 基座的 mod_scope 槽：追加 DCSB 瞄具基座。
             AddItemIdsToSlot(items, EmtiId, EmtiLabel, ScopeSlotName, M14DcsbMountId);
+
+            // 116mm 7.62x25 TT 自制螺纹枪管的 mod_muzzle 枪口槽：追加 Alpha Dog Alpha 9 9x19 声音抑制器。
+            AddItemIdsToSlot(items, TtBarrel116ThreadedId, TtBarrel116ThreadedLabel, MuzzleSlotName, AlphaDogSuppressorId);
+
+            // AA-12 Gen2 的 mod_scope 瞄具槽：追加 La Rue Tactical QD LT-101 皮卡汀尼立管导轨基座。
+            AddItemIdsToSlot(items, Aa12Gen2Id, Aa12Gen2Label, ScopeSlotName, LaRueLt101Id);
         }
         catch (Exception ex)
         {

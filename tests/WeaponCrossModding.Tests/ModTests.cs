@@ -171,6 +171,13 @@ public class WeaponCrossModdingPluginTests
     private const string MxlrMagId = "67c5424826265106dd0697a4";
     private const string Ks23MetalStockId = "5e848dc4e4dbc5266a4ec63d";
 
+    // TT 116mm 螺纹枪管、AA-12 Gen2、La Rue LT-101。
+    private const string TtBarrel116ThreadedId = "571a279b24597720b4066566";
+    private const string TtBarrel116ThreadedExistingMuzzleId = "571a28e524597720b4066567";
+    private const string Aa12Gen2Id = "67124dcfa3541f2a1f0e788b";
+    private const string Aa12Gen2ExistingScopeId = "57ae0171245977343c27bfcf";
+    private const string LaRueLt101Id = "5c064c400db834001d23f468";
+
     // 20x1mm 玩具枪、其原装弹匣与玩具弹，以及 7.62x25 托卡列夫全部 7 种弹药。
     private const string ToyGunId = "66015072e9f84d5680039678";
     private const string ToyGunMagId = "66015dc4aaad2f54cb04c56a";
@@ -1184,6 +1191,34 @@ public class WeaponCrossModdingPluginTests
         }
 
         Assert.Equal(1 + M870StockIds.Length, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsAlphaDogSuppressorToTtBarrel116MuzzleSlot()
+    {
+        var barrel = ItemWithSlot("barrel_tt_116mm_762x25tt_threaded", "mod_muzzle", TtBarrel116ThreadedExistingMuzzleId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(TtBarrel116ThreadedId)] = barrel };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(barrel, "mod_muzzle");
+        Assert.Contains(new MongoId(TtBarrel116ThreadedExistingMuzzleId), filter);
+        Assert.Contains(new MongoId(AlphaDogSuppressorId), filter);
+        Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsLaRueLt101ToAa12Gen2ScopeSlot()
+    {
+        var gun = ItemWithSlot("weapon_mps_aa_12_gen_2_12g", "mod_scope", Aa12Gen2ExistingScopeId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Aa12Gen2Id)] = gun };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(gun, "mod_scope");
+        Assert.Contains(new MongoId(Aa12Gen2ExistingScopeId), filter);
+        Assert.Contains(new MongoId(LaRueLt101Id), filter);
+        Assert.Equal(2, filter.Count);
     }
 
     [Fact]
