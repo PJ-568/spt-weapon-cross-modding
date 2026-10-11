@@ -37,6 +37,10 @@
    - 在 MTs-255-12 的护木槽（`mod_handguard`）安装 MP-18 的护木（木制 / 塑料），在其枪托槽（`mod_stock`）安装雷明顿 Model 870 的任一枪托（如 Magpul SGA、Remington SPS），确认均可安装；
    - 在 116mm TT 自制螺纹枪管的枪口槽（`mod_muzzle`）安装 Alpha Dog Alpha 9 9x19 消音器，确认可安装；
    - 在 AA-12 Gen2 的瞄具槽（`mod_scope`）安装 La Rue Tactical QD LT-101 皮卡汀尼立管导轨基座，确认可安装；
+   - 在 AA-12 457mm 枪管的导轨槽（`mod_mount`）安装 MTs-255-12 12ga 收束器（Remington Tactical Choke），确认可安装；
+   - 在 20x1mm 玩具枪的膛室（`Chambers`）安装 20x70 规格霰弹（如 20x70 buckshot、20x70 slug star 等），在 MXLR .308 ME 5 发管状弹仓的装填位（`Cartridges`）安装 20x70 规格霰弹，确认均可安装；
+   - 在 116mm TT 自制螺纹枪管的枪口槽（`mod_muzzle`）安装 Alpha Dog Alpha 9 9x19 消音器，确认可安装；
+   - 在 AA-12 Gen2 的瞄具槽（`mod_scope`）安装 La Rue Tactical QD LT-101 皮卡汀尼立管导轨基座，确认可安装；
    - 清客户端缓存后，验证 7.62x25 供弹链路：给 Marlin MXLR 的 5 发管状弹仓压入 7.62x25 托卡列夫子弹，插入玩具枪的 `mod_magazine` 槽，尝试开火；同时确认玩具枪原装 20x1mm 玩具弹仍可使用；
    - 尝试同时安装 PPSh-41 防尘盖与 HUXWRX HX-QD 消音器，确认二者互斥；
    - 尝试在 PPSh-41 上同时安装 SKS 枪身套件与任一非 KS-23 枪托（含 Zveno 缓冲管转接器），确认二者互斥；

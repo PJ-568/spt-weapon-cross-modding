@@ -178,6 +178,25 @@ public class WeaponCrossModdingPluginTests
     private const string Aa12Gen2ExistingScopeId = "57ae0171245977343c27bfcf";
     private const string LaRueLt101Id = "5c064c400db834001d23f468";
 
+    // AA-12 457mm 枪管、MTs-255-12 收束器。
+    private const string Mts255ChokeId = "619d36da53b4d42ee724fae4";
+
+    // 20x70 规格霰弹（Caliber20g）全部 11 种。
+    private static readonly string[] Caliber20gShellIds =
+    [
+        "5a38ebd9c4a282000d722a5b", // 20x70 buckshot
+        "5d6e695fa4b936359b35d852", // 20x70 buckshot 56
+        "5d6e69b9a4b9361bc8618958", // 20x70 buckshot 62
+        "5d6e69c7a4b9360b6c0d54e4", // 20x70 buckshot 73
+        "5d6e6a05a4b93618084f58d0", // 20x70 slug star
+        "5d6e6a42a4b9364f07165f52", // 20x70 slug poleva 6u
+        "5d6e6a53a4b9361bd473feec", // 20x70 slug poleva 3
+        "5d6e6a5fa4b93614ec501745", // 20x70 slug broadhead
+        "6601380580e77cfd080e3418", // 20x70 flechette
+        "660137d8481cc6907a0c5cda", // 20x70 slug ap
+        "660137ef76c1b56143052be8", // 20x70 slug dg
+    ];
+
     // 20x1mm 玩具枪、其原装弹匣与玩具弹，以及 7.62x25 托卡列夫全部 7 种弹药。
     private const string ToyGunId = "66015072e9f84d5680039678";
     private const string ToyGunMagId = "66015dc4aaad2f54cb04c56a";
@@ -772,7 +791,8 @@ public class WeaponCrossModdingPluginTests
         var filter = FilterOf(barrel, "mod_mount");
         Assert.Contains(new MongoId(Aa12MountExistingId), filter);
         Assert.Contains(new MongoId(M60BipodId), filter);
-        Assert.Equal(2, filter.Count);
+        Assert.Contains(new MongoId(Mts255ChokeId), filter);
+        Assert.Equal(3, filter.Count);
     }
 
     [Fact]
@@ -1060,7 +1080,11 @@ public class WeaponCrossModdingPluginTests
         {
             Assert.Contains(new MongoId(id), filter);
         }
-        Assert.Equal(1 + Caliber762x25AmmoIds.Length, filter.Count);
+        foreach (string id in Caliber20gShellIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length + Caliber20gShellIds.Length, filter.Count);
 
         // 实验性最小改法：不动单值 ammoCaliber，仅补白名单，故 20x1mm 能力保留。
         Assert.Equal("Caliber20x1mm", gun.Properties.AmmoCaliber);
@@ -1099,7 +1123,7 @@ public class WeaponCrossModdingPluginTests
         await plugin.OnLoadAsync(CancellationToken.None);
         await plugin.OnLoadAsync(CancellationToken.None);
 
-        Assert.Equal(1 + Caliber762x25AmmoIds.Length, AmmoFilterOf(gun, isChamber: true).Count);
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length + Caliber20gShellIds.Length, AmmoFilterOf(gun, isChamber: true).Count);
         Assert.Single(AmmoFilterOf(mag, isChamber: false));
     }
 
@@ -1131,7 +1155,11 @@ public class WeaponCrossModdingPluginTests
         {
             Assert.Contains(new MongoId(id), filter);
         }
-        Assert.Equal(1 + Caliber762x25AmmoIds.Length, filter.Count);
+        foreach (string id in Caliber20gShellIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length + Caliber20gShellIds.Length, filter.Count);
     }
 
     [Fact]
@@ -1219,6 +1247,64 @@ public class WeaponCrossModdingPluginTests
         Assert.Contains(new MongoId(Aa12Gen2ExistingScopeId), filter);
         Assert.Contains(new MongoId(LaRueLt101Id), filter);
         Assert.Equal(2, filter.Count);
+    }
+
+    [Fact]
+    public async Task AddsMts255ChokeToAa12457BarrelMountSlot()
+    {
+        var barrel = ItemWithSlot("barrel_aa12_mps_457mm", "mod_mount", Aa12MountExistingId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(Aa12457BarrelId)] = barrel };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = FilterOf(barrel, "mod_mount");
+        Assert.Contains(new MongoId(Aa12MountExistingId), filter);
+        Assert.Contains(new MongoId(Mts255ChokeId), filter);
+        Assert.Contains(new MongoId(M60BipodId), filter);
+        Assert.Equal(3, filter.Count);
+    }
+
+    [Fact]
+    public async Task Adds20x70ShellsToToyGunChamber()
+    {
+        var gun = ItemWithAmmoContainer("weapon_ussr_pd_20x1mm", isChamber: true, ToyAmmoId);
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(ToyGunId)] = gun };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var chamberFilter = AmmoFilterOf(gun, isChamber: true);
+
+        Assert.Contains(new MongoId(ToyAmmoId), chamberFilter);
+        foreach (string id in Caliber20gShellIds)
+        {
+            Assert.Contains(new MongoId(id), chamberFilter);
+        }
+        foreach (string id in Caliber762x25AmmoIds)
+        {
+            Assert.Contains(new MongoId(id), chamberFilter);
+        }
+        Assert.Equal(1 + Caliber20gShellIds.Length + Caliber762x25AmmoIds.Length, chamberFilter.Count);
+    }
+
+    [Fact]
+    public async Task Adds20x70ShellsToMxlrMagazine()
+    {
+        var mag = ItemWithAmmoContainer("mag_m1895_marlin_mxlr_784x49_5", isChamber: false, "67c540c3d0538d12ec036c08");
+        var items = new Dictionary<MongoId, TemplateItem> { [new MongoId(MxlrMagId)] = mag };
+
+        await BuildPlugin(items).OnLoadAsync(CancellationToken.None);
+
+        var filter = AmmoFilterOf(mag, isChamber: false);
+        Assert.Contains(new MongoId("67c540c3d0538d12ec036c08"), filter);
+        foreach (string id in Caliber762x25AmmoIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        foreach (string id in Caliber20gShellIds)
+        {
+            Assert.Contains(new MongoId(id), filter);
+        }
+        Assert.Equal(1 + Caliber762x25AmmoIds.Length + Caliber20gShellIds.Length, filter.Count);
     }
 
     [Fact]

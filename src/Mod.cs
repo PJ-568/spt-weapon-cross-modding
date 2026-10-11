@@ -77,6 +77,9 @@ namespace Pj568.WeaponCrossModding;
 ///      （不含 Mesa Tactical LEO 转接器与 Fab Defence AGR 握把）。
 ///  54. 让 116mm 7.62x25 TT 自制螺纹枪管的枪口槽（mod_muzzle）支持安装 Alpha Dog Alpha 9 9x19 声音抑制器。
 ///  55. 让 AA-12 Gen2 的瞄具槽（mod_scope）支持安装 La Rue Tactical QD LT-101 皮卡汀尼立管导轨基座。
+///  56. 让 AA-12 12ga 457mm 枪管的导轨槽（mod_mount）支持安装 MTs-255-12 12ga 收束器（Remington Tactical Choke）。
+///  57. 让 20x1mm 玩具枪的膛室与弹匣装填位、以及 MXLR .308 ME 5 发管状弹仓的装填位，
+///      均支持全部 11 种 20x70 规格霰弹（Caliber20g）。
 ///
 /// 做法：往目标槽的 SlotFilter.Filter（HashSet&lt;MongoId&gt;）追加物品 id（幂等）。
 /// </summary>
@@ -267,6 +270,9 @@ public class WeaponCrossModdingPlugin(
     // AA-12 457mm 枪管（mod_mount 导轨槽宿主）。
     private const string Aa12Barrel457Id = "670fced86a7e274b1a0964e8";
 
+    // MTs-255-12 12ga 收束器（Remington Tactical Choke 12g，可装于 AA-12 457mm 枪管 mod_mount 槽）。
+    private const string Mts255ChokeId = "619d36da53b4d42ee724fae4";
+
     // AA-12 Gen2 (MPS Auto Assault-12 Gen2) 自动霰弹枪（mod_scope 瞄具槽宿主）。
     private const string Aa12Gen2Id = "67124dcfa3541f2a1f0e788b";
 
@@ -354,6 +360,22 @@ public class WeaponCrossModdingPlugin(
         ("5736026a245977644601dc61", "P Gl"),
         ("573603562459776430731618", "Pst gzh"),
         ("573603c924597764442bd9cb", "T Gzh"),
+    ];
+
+    // 20x70 规格霰弹（Caliber20g）全部 11 种——兼容 MC 20-01 Sb.3 2 发弹匣。
+    private static readonly (string Id, string Label)[] Caliber20gShells =
+    [
+        ("5a38ebd9c4a282000d722a5b", "20x70 buckshot"),
+        ("5d6e695fa4b936359b35d852", "20x70 buckshot 56"),
+        ("5d6e69b9a4b9361bc8618958", "20x70 buckshot 62"),
+        ("5d6e69c7a4b9360b6c0d54e4", "20x70 buckshot 73"),
+        ("5d6e6a05a4b93618084f58d0", "20x70 slug star"),
+        ("5d6e6a42a4b9364f07165f52", "20x70 slug poleva 6u"),
+        ("5d6e6a53a4b9361bd473feec", "20x70 slug poleva 3"),
+        ("5d6e6a5fa4b93614ec501745", "20x70 slug broadhead"),
+        ("6601380580e77cfd080e3418", "20x70 flechette"),
+        ("660137d8481cc6907a0c5cda", "20x70 slug ap"),
+        ("660137ef76c1b56143052be8", "20x70 slug dg"),
     ];
 
     // EMTI-019 基座（游戏本体自带，非 Mod 物品）：其瞄具槽支持 DCSB 瞄具基座。
@@ -470,6 +492,7 @@ public class WeaponCrossModdingPlugin(
     private const string Aa12Gen2Label = "AA-12 Gen2";
     private const string Mp18RifleLabel = "MP-18 rifle";
     private const string Mts255Label = "MTs-255-12";
+    private const string Mts255ChokeLabel = "MTs-255-12 choke";
     private const string MarlinMxlrLabel = "Marlin MXLR";
     private const string SksRearSightBlockLabel = "SKS rear sight block";
     private const string OpsksRearSightBlockLabel = "OP-SKS rear sight block";
@@ -620,6 +643,15 @@ public class WeaponCrossModdingPlugin(
 
             // EMTI-019 基座的 mod_scope 槽：追加 DCSB 瞄具基座。
             AddItemIdsToSlot(items, EmtiId, EmtiLabel, ScopeSlotName, M14DcsbMountId);
+
+            // AA-12 457mm 枪管的 mod_mount 导轨槽：追加 MTs-255-12 收束器。
+            AddItemIdsToSlot(items, Aa12Barrel457Id, Aa12Barrel457Label, MountSlotName, Mts255ChokeId);
+
+            // 20x1mm 玩具枪的膛室：追加全部 11 种 20x70 规格霰弹。
+            AddAmmoIdsToContainer(items, ToyGunId, ToyGunLabel, isChamber: true, [.. Caliber20gShells.Select(x => x.Id)]);
+
+            // MXLR .308 ME 5 发管状弹仓的装填位：追加全部 11 种 20x70 规格霰弹。
+            AddAmmoIdsToContainer(items, MxlrMagId, MxlrMagLabel, isChamber: false, [.. Caliber20gShells.Select(x => x.Id)]);
 
             // 116mm 7.62x25 TT 自制螺纹枪管的 mod_muzzle 枪口槽：追加 Alpha Dog Alpha 9 9x19 声音抑制器。
             AddItemIdsToSlot(items, TtBarrel116ThreadedId, TtBarrel116ThreadedLabel, MuzzleSlotName, AlphaDogSuppressorId);

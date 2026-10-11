@@ -25,6 +25,8 @@
 - MTs-255-12 12 号左轮霰弹枪的 `mod_handguard` 护木槽：新增 MP-18 的全部护木（木制、塑料）；其 `mod_stock` 枪托槽：新增雷明顿 Model 870 的 Magpul SGA、Remington SPS 与 Shockwave Raptor 枪托（不含 Mesa Tactical LEO 转接器与 Fab Defence AGR 握把）。
 - 116mm 7.62x25 TT 自制螺纹枪管的 `mod_muzzle` 枪口槽：新增 Alpha Dog Alpha 9 9x19 声音抑制器。
 - AA-12 Gen2 (MPS Auto Assault-12 Gen2) 的 `mod_scope` 瞄具槽：新增 La Rue Tactical QD LT-101 皮卡汀尼立管导轨基座。
+- AA-12 12ga 457mm 枪管的导轨槽（`mod_mount`）支持安装 MTs-255-12 12ga 收束器（Remington Tactical Choke）。
+- 20x1mm 玩具枪的膛室与 MXLR .308 ME 5 发管状弹仓的装填位，均支持全部 11 种 20x70 规格霰弹（Caliber20g），该规格霰弹原本被 MC 20-01 Sb.3 12ga 2 发 TOZ-106 弹匣兼容。
 
 ## 弹药与口径
 
@@ -89,6 +91,8 @@
 - `mod_handguard` slot of the MTs-255-12 12ga revolver shotgun: adds all MP-18 handguards (wooden, plastic); its `mod_stock` slot: adds the Remington Model 870's Magpul SGA, Remington SPS and Shockwave Raptor stocks (excluding the Mesa Tactical LEO stock adapter and the Fab Defence AGR pistol grip).
 - `mod_muzzle` slot of the 116 mm 7.62x25 TT handmade threaded barrel: adds the Alpha Dog Alpha 9 9x19 sound suppressor.
 - `mod_scope` slot of the AA-12 Gen2 (MPS Auto Assault-12 Gen2): adds the La Rue Tactical QD LT-101 Picatinny riser mount.
+- `mod_mount` slot of the AA-12 12ga 457 mm barrel: adds the MTs-255-12 12ga choke (Remington Tactical Choke).
+- Chamber of the 20x1mm toy gun and cartridge slot of the MXLR .308 ME 5-round tubular magazine: both accept all 11 types of 20x70 gauge shells (Caliber20g), which are natively accepted by the MC 20-01 Sb.3 12ga 2-round TOZ-106 magazine.
 
 ## Ammunition and caliber
 
